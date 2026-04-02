@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Thu Chi Kiên K80 - Final</title>
+    <title>Thu Chi Kiên K80</title>
     <style>
         body { font-family: -apple-system, sans-serif; margin: 0; background: #f4f6f8; color: #333; }
         .header { background: #007bff; color: white; padding: 15px; text-align: center; font-weight: bold; position: sticky; top: 0; z-index: 100; }
@@ -22,15 +22,15 @@
         .btn-save { background: #28a745; color: white; width: 100%; padding: 16px; border: none; border-radius: 8px; font-size: 18px; font-weight: bold; margin-bottom: 10px; cursor: pointer; }
         .btn-print { background: #6c757d; color: white; width: 100%; padding: 12px; border: none; border-radius: 8px; font-weight: bold; cursor: pointer; }
         .diff-box { background: #343a40; color: white; padding: 15px; border-radius: 8px; text-align: center; }
-        .status-text { font-size: 1.1em; font-weight: bold; margin-top: 5px; display: block; }
+        .status-text { font-size: 1.2em; font-weight: bold; margin-top: 5px; display: block; }
 
         /* Bảng tổng hợp */
         .summary-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 5px; margin-bottom: 15px; }
         .s-card { background: white; padding: 10px; border-radius: 8px; text-align: center; font-size: 0.7em; }
         table { width: 100%; border-collapse: collapse; background: white; font-size: 13px; }
         th, td { border-bottom: 1px solid #eee; padding: 12px 5px; text-align: right; }
-        .txt-green { color: #28a745; font-weight: bold; }
-        .txt-red { color: #dc3545; font-weight: bold; }
+        .txt-green { color: #28a745; font-weight: bold; } /* Dương tiền */
+        .txt-red { color: #dc3545; font-weight: bold; }   /* Âm tiền */
 
         @media print {
             .header, .tabs, button, .btn-save, .btn-print, .filter-bar, #report, input.note, .btn-add { display: none !important; }
@@ -97,7 +97,6 @@
 <script>
     const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxdVePBHUf2a5aHs8kRaFLJKZ_LgVlORyGlUXqNsSYTy5q1J1xwCpSr80sACTVNdg-2/exec";
 
-    // Khởi tạo
     document.getElementById('date').valueAsDate = new Date();
     document.getElementById('m-filter').value = new Date().toISOString().slice(0, 7);
 
@@ -114,8 +113,10 @@
         document.getElementById('diff-val').innerText = new Intl.NumberFormat().format(diff.toFixed(0));
         
         const label = document.getElementById('status-label');
-        if (diff < 0) { label.innerText = "TRẠNG THÁI: ÂM"; label.className = "status-text txt-red"; }
-        else if (diff > 0) { label.innerText = "TRẠNG THÁI: DƯƠNG"; label.className = "status-text txt-green"; }
+        // LOGIC MỚI: Số dương (>0) là Hụt tiền -> Hiện ÂM TIỀN (Đỏ)
+        if (diff > 0) { label.innerText = "TRẠNG THÁI: ÂM TIỀN"; label.className = "status-text txt-red"; }
+        // Số âm (<0) là Dư tiền -> Hiện DƯƠNG TIỀN (Xanh)
+        else if (diff < 0) { label.innerText = "TRẠNG THÁI: DƯƠNG TIỀN"; label.className = "status-text txt-green"; }
         else { label.innerText = "TRẠNG THÁI: BẰNG"; label.className = "status-text"; }
     }
 
@@ -158,12 +159,14 @@
         try {
             const res = await fetch(SCRIPT_URL); 
             const data = await res.json(); 
-            window.rawD = data; // Lưu dữ liệu vào biến toàn cục rawD
+            window.rawD = data; 
             let h = '', sR = 0, sE = 0, sD = 0;
             data.filter(x => x[0] && x[0].toString().startsWith(f)).reverse().forEach(x => {
                 const dv = parseFloat(x[9])||0, rv = parseFloat(x[1])||0, ev = (parseFloat(x[7])||0)+(parseFloat(x[8])||0);
                 sR += rv; sE += ev; sD += dv;
-                h += `<tr><td style="text-align:left; color:#007bff; text-decoration:underline; font-weight:bold" onclick="viewBack('${x[0]}')">${x[0].split('-')[2]}</td><td class="${dv<0?'txt-green':(dv>0?'txt-red':'')}">${new Intl.NumberFormat().format(dv)}</td><td>${new Intl.NumberFormat().format(rv)}</td><td>${new Intl.NumberFormat().format(ev)}</td></tr>`;
+                // Màu sắc bảng tổng hợp cũng đảo theo logic mới
+                let cClass = dv > 0 ? "txt-red" : (dv < 0 ? "txt-green" : "");
+                h += `<tr><td style="text-align:left; color:#007bff; text-decoration:underline; font-weight:bold" onclick="viewBack('${x[0]}')">${x[0].split('-')[2]}</td><td class="${cClass}">${new Intl.NumberFormat().format(dv)}</td><td>${new Intl.NumberFormat().format(rv)}</td><td>${new Intl.NumberFormat().format(ev)}</td></tr>`;
             });
             b.innerHTML = h || 'Trống';
             document.getElementById('sum-r').innerText = new Intl.NumberFormat().format(sR);
@@ -173,11 +176,8 @@
     }
 
     function viewBack(dateStr) {
-        // Tìm dữ liệu chuẩn trong rawD
         const r = window.rawD.find(i => i[0].toString() === dateStr);
         if(!r) return;
-        
-        // Điền lại Tab Nhập
         document.getElementById('date').value = r[0];
         document.getElementById('total_rev').value = r[1];
         document.getElementById('shopee').value = r[2]; 
@@ -186,14 +186,8 @@
         document.getElementById('transfer').value = r[5]; 
         document.getElementById('cash').value = r[6];
         document.getElementById('expense').value = r[7]; 
-        
-        // Xử lý mục "Khác"
         document.getElementById('other-list').innerHTML = '';
-        if(parseFloat(r[8]) > 0) {
-            addOther();
-            document.querySelector('.o-amt').value = r[8];
-        }
-        
+        if(parseFloat(r[8]) > 0) { addOther(); document.querySelector('.o-amt').value = r[8]; }
         document.getElementById('n_rev').value = r[10] || "";
         cal(); 
         openTab('input', document.getElementById('tab-in'));
