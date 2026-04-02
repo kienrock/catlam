@@ -3,9 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Hệ Thống Thu Chi - Kiên K80</title>
+    <title>Thu Chi Kiên - K80</title>
     <style>
-        body { font-family: -apple-system, sans-serif; margin: 0; background: #f4f6f8; color: #333; }
+        body { font-family: sans-serif; margin: 0; background: #f4f6f8; color: #333; }
         .header { background: #007bff; color: white; padding: 15px; text-align: center; font-weight: bold; position: sticky; top: 0; z-index: 100; }
         .tabs { display: flex; background: white; border-bottom: 1px solid #ddd; position: sticky; top: 48px; z-index: 99; }
         .tab { flex: 1; padding: 15px; text-align: center; cursor: pointer; color: #888; font-size: 14px; }
@@ -13,117 +13,148 @@
         .content { display: none; padding: 15px; max-width: 500px; margin: auto; }
         .content.active { display: block; }
         
+        /* Giao diện Nhập liệu */
         .group { background: white; padding: 12px; border-radius: 8px; margin-bottom: 10px; box-shadow: 0 1px 3px rgba(0,0,0,0.1); }
         .title { font-size: 0.8em; font-weight: bold; color: #007bff; margin-bottom: 8px; display: block; }
         .in-row { display: flex; gap: 5px; margin-bottom: 8px; }
         input { flex: 2; padding: 12px; border: 1px solid #ddd; border-radius: 6px; font-size: 16px; width: 100%; box-sizing: border-box; }
-        input.note { flex: 3; font-size: 12px; background: #f9f9f9; color: #666; }
+        input.note { flex: 3; font-size: 12px; background: #f9f9f9; }
         
-        .btn-save { background: #28a745; color: white; width: 100%; padding: 16px; border: none; border-radius: 8px; font-size: 18px; font-weight: bold; margin-bottom: 10px; cursor: pointer; }
-        .btn-print-action { background: #6c757d; color: white; width: 100%; padding: 12px; border: none; border-radius: 8px; font-weight: bold; cursor: pointer; }
-        .diff-box { background: #343a40; color: white; padding: 15px; border-radius: 8px; display: flex; justify-content: space-between; margin: 10px 0; }
+        .btn-save { background: #28a745; color: white; width: 100%; padding: 16px; border: none; border-radius: 8px; font-size: 18px; font-weight: bold; margin-bottom: 10px; }
+        .btn-print { background: #6c757d; color: white; width: 100%; padding: 12px; border: none; border-radius: 8px; font-weight: bold; cursor: pointer; }
         
+        .diff-box { background: #343a40; color: white; padding: 15px; border-radius: 8px; margin-top: 10px; text-align: center; }
+        .status-text { font-size: 1.2em; font-weight: bold; margin-top: 5px; display: block; }
+
+        /* Bảng tổng hợp */
         .summary-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 5px; margin-bottom: 15px; }
-        .s-card { background: white; padding: 10px; border-radius: 8px; text-align: center; font-size: 0.7em; box-shadow: 0 1px 3px rgba(0,0,0,0.1); }
+        .s-card { background: white; padding: 10px; border-radius: 8px; text-align: center; font-size: 0.7em; }
         table { width: 100%; border-collapse: collapse; background: white; font-size: 13px; }
         th, td { border-bottom: 1px solid #eee; padding: 10px 5px; text-align: right; }
-        .txt-left { text-align: left; }
         .txt-green { color: #28a745; font-weight: bold; }
         .txt-red { color: #dc3545; font-weight: bold; }
 
-        /* CSS tối ưu cho máy in nhiệt 80mm */
+        /* CẤU HÌNH IN KHỔ 80MM - CHỈ IN PHẦN NHẬP LIỆU */
         @media print {
-            .header, .tabs, button, input.note, .filter-bar, .btn-save, .btn-print-action { display: none !important; }
-            .content { display: block !important; width: 100% !important; margin: 0 !important; padding: 0 !important; }
-            @page { size: 80mm auto; margin: 0; }
+            /* Ẩn hoàn toàn các thành phần không cần in */
+            .header, .tabs, .tab, #report, button, .btn-save, .btn-print, .filter-bar, input.note, .btn-add { 
+                display: none !important; 
+            }
+            
+            /* Chỉ hiển thị vùng Nhập liệu */
+            #input.content { 
+                display: block !important; 
+                width: 100% !important; 
+                padding: 0 !important; 
+                margin: 0 !important; 
+            }
+
             body { background: white; }
-            .group { box-shadow: none; border-bottom: 1px dashed #ccc; margin-bottom: 5px; padding: 5px 0; }
-            input { border: none !important; font-weight: bold !important; padding: 0 !important; font-size: 14px !important; }
-            table { font-size: 11px !important; width: 100% !important; border: 1px solid black !important; }
-            td, th { border: 1px solid black !important; padding: 3px !important; }
-            .diff-box { color: black !important; background: none !important; border: 1px solid black; }
-            .content::before { content: "PHIẾU THU CHI HÀNG NGÀY"; display: block; text-align: center; font-weight: bold; font-size: 16px; margin: 10px 0; }
+            @page { size: 80mm auto; margin: 0; }
+            
+            .group { box-shadow: none !important; border-bottom: 1px dashed #000; margin-bottom: 10px; padding: 5px 0; }
+            .title { color: black !important; font-size: 12px; }
+            
+            /* Biến ô input thành chữ in đậm khi in */
+            input { border: none !important; font-weight: bold !important; padding: 0 !important; font-size: 16px !important; color: black !important; }
+            
+            .diff-box { 
+                background: white !important; 
+                color: black !important; 
+                border: 2px solid black; 
+                margin-top: 20px; 
+            }
+            
+            #input::before {
+                content: "BIÊN LAI THU CHI HÀNG NGÀY";
+                display: block; text-align: center; font-weight: bold; font-size: 18px; margin-bottom: 15px;
+            }
         }
     </style>
 </head>
 <body>
 
-<div class="header">QUẢN LÝ KIÊN K80</div>
+<div class="header">QUẢN LÝ THU CHI KIÊN</div>
 <div class="tabs">
-    <div id="tab-in" class="tab active" onclick="openTab('input', this)">NHẬP LIỆU</div>
-    <div id="tab-re" class="tab" onclick="openTab('report', this)">TỔNG HỢP</div>
+    <div id="t1" class="tab active" onclick="openTab('input', this)">NHẬP LIỆU</div>
+    <div id="t2" class="tab" onclick="openTab('report', this)">TỔNG HỢP</div>
 </div>
 
 <div id="input" class="content active">
     <div class="group"><span class="title">Ngày</span><input type="date" id="date"></div>
-    <div class="group"><span class="title">1.1 Doanh thu</span>
+    <div class="group"><span class="title">Tổng Doanh Thu</span>
         <div class="in-row"><input type="number" id="total_rev" oninput="cal()"><input type="text" id="n_rev" class="note" placeholder="Ghi chú"></div>
     </div>
-    <div class="group"><span class="title">1.2 Các App (Shopee/Grab/Be)</span>
-        <div class="in-row"><input type="number" id="shopee" placeholder="Shopee" oninput="cal()"><input type="text" id="n_shopee" class="note"></div>
-        <div class="in-row"><input type="number" id="grab" placeholder="Grab" oninput="cal()"><input type="text" id="n_grab" class="note"></div>
-        <div class="in-row"><input type="number" id="be" placeholder="Be" oninput="cal()"><input type="text" id="n_be" class="note"></div>
+    <div class="group"><span class="title">Tiền App (Shopee/Grab/Be)</span>
+        <div class="in-row"><input type="number" id="shopee" placeholder="Shopee" oninput="cal()"></div>
+        <div class="in-row"><input type="number" id="grab" placeholder="Grab" oninput="cal()"></div>
+        <div class="in-row"><input type="number" id="be" placeholder="Be" oninput="cal()"></div>
     </div>
-    <div class="group"><span class="title">1.3 Chuyển khoản & 1.4 Tiền mặt</span>
-        <div class="in-row"><input type="number" id="transfer" placeholder="CK" oninput="cal()"><input type="text" id="n_transfer" class="note"></div>
-        <div class="in-row"><input type="number" id="cash" placeholder="TM" oninput="cal()"><input type="text" id="n_cash" class="note"></div>
+    <div class="group"><span class="title">Chuyển khoản & Tiền mặt</span>
+        <div class="in-row"><input type="number" id="transfer" placeholder="CK" oninput="cal()"></div>
+        <div class="in-row"><input type="number" id="cash" placeholder="TM" oninput="cal()"></div>
     </div>
-    <div class="group"><span class="title">2 Chi & 3 Khác</span>
-        <div class="in-row"><input type="number" id="expense" placeholder="Chi" oninput="cal()"><input type="text" id="n_expense" class="note"></div>
-        <div id="other-list">
-            <div class="in-row o-item"><input type="number" class="o-amt" placeholder="Khác" oninput="cal()"><input type="text" class="o-note" placeholder="Ghi chú"></div>
-        </div>
-        <button onclick="addOther()" style="width:100%; background:none; border:1px dashed #ccc; padding:5px; margin-bottom:10px">+ Thêm mục khác</button>
+    <div class="group"><span class="title">Tổng Chi & Khác</span>
+        <div class="in-row"><input type="number" id="expense" placeholder="Chi" oninput="cal()"></div>
+        <div id="other-list"></div>
+        <button class="btn-add" onclick="addOther()" style="width:100%; border:1px dashed #ccc; background:none; padding:5px; margin-bottom:10px">+ Thêm khoản khác</button>
     </div>
-    <div class="diff-box"><span>CHÊNH LỆCH:</span><b id="diff-val">0</b></div>
+
+    <div class="diff-box">
+        <div style="display:flex; justify-content:space-between"><span>CHÊNH LỆCH:</span><b id="diff-val">0</b></div>
+        <span id="status-label" class="status-text">--</span>
+    </div>
     
     <button id="btnSave" class="btn-save" onclick="send()">LƯU DỮ LIỆU</button>
-    <button class="btn-print-action" onclick="window.print()">🖨️ IN BIÊN LAI K80</button>
+    <button class="btn-print" onclick="window.print()">🖨️ IN BIÊN LAI (K80)</button>
 </div>
 
 <div id="report" class="content">
-    <div class="filter-bar" style="margin-bottom:10px">
-        <label>Tháng:</label><input type="month" id="m-filter" onchange="load()">
-    </div>
+    <input type="month" id="m-filter" onchange="load()" style="margin-bottom:10px; width:100%; padding:10px">
     <div class="summary-grid">
-        <div class="s-card">Doanh Thu<br><b id="sum-r" class="txt-green">0</b></div>
+        <div class="s-card">DT<br><b id="sum-r" class="txt-green">0</b></div>
         <div class="s-card">Chi/K<br><b id="sum-e" class="txt-red">0</b></div>
         <div class="s-card">Chênh<br><b id="sum-d">0</b></div>
     </div>
-    <button class="btn-print-action" onclick="window.print()" style="margin-bottom:10px">🖨️ IN BẢNG TỔNG HỢP</button>
     <table>
-        <thead><tr><th class="txt-left">Ngày</th><th>Chênh</th><th>DT</th><th>Chi</th></tr></thead>
+        <thead><tr><th style="text-align:left">Ngày</th><th>Chênh</th><th>DT</th><th>Chi</th></tr></thead>
         <tbody id="res"></tbody>
     </table>
 </div>
 
 <script>
-    const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyWlcIPZJa6kf1c3qJaV721LMvPx791mv2Zuk98HCHp9foXrzbLafOwzBJq9idPaxK_/exec";
+    const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxdVePBHUf2a5aHs8kRaFLJKZ_LgVlORyGlUXqNsSYTy5q1J1xwCpSr80sACTVNdg-2/exec";
 
-    // Khởi tạo ngày
-    const d = new Date();
-    const todayStr = d.toLocaleDateString('sv-SE'); // Lấy định dạng yyyy-mm-dd
-    document.getElementById('date').value = todayStr;
-    document.getElementById('m-filter').value = todayStr.slice(0, 7);
+    // Khởi tạo
+    document.getElementById('date').valueAsDate = new Date();
+    document.getElementById('m-filter').value = new Date().toISOString().slice(0, 7);
 
     function addOther() {
-        const div = document.createElement('div'); div.className = 'in-row o-item';
-        div.innerHTML = '<input type="number" class="o-amt" placeholder="Khác" oninput="cal()"><input type="text" class="o-note" placeholder="Ghi chú">';
-        document.getElementById('other-list').appendChild(div);
+        const d = document.createElement('div'); d.className = 'in-row o-item';
+        d.innerHTML = '<input type="number" class="o-amt" placeholder="Khác" oninput="cal()"><input type="text" class="o-note" placeholder="Ghi chú">';
+        document.getElementById('other-list').appendChild(d);
     }
 
     function cal() {
         const gV = (id) => parseFloat(document.getElementById(id).value) || 0;
         let oS = 0; document.querySelectorAll('.o-amt').forEach(e => oS += (parseFloat(e.value) || 0));
         const diff = gV('total_rev') - (gV('shopee')+gV('grab')+gV('be')) - gV('transfer') - gV('cash') - gV('expense') - oS;
+        
+        // Hiển thị số chênh lệch
         document.getElementById('diff-val').innerText = new Intl.NumberFormat().format(diff.toFixed(0));
+        
+        // Hiển thị chữ Dương hoặc Âm ngay dưới số chênh lệch
+        const label = document.getElementById('status-label');
+        if (diff < 0) { label.innerText = "TRẠNG THÁI: ÂM"; label.className = "status-text txt-red"; }
+        else if (diff > 0) { label.innerText = "TRẠNG THÁI: DƯƠNG"; label.className = "status-text txt-green"; }
+        else { label.innerText = "TRẠNG THÁI: BẰNG"; label.className = "status-text"; }
     }
 
     async function send() {
         const b = document.getElementById('btnSave'); b.disabled = true; b.innerText = "ĐANG LƯU...";
         let ns = [];
         ['rev','shopee','grab','be','transfer','cash','expense'].forEach(id => {
-            let v = document.getElementById('n_'+id).value; if(v) ns.push(v);
+            let v = document.getElementById('n_'+id)?.value; if(v) ns.push(v);
         });
         let oS = 0; document.querySelectorAll('.o-item').forEach(e => {
             let a = e.querySelector('.o-amt').value; if(a) { oS += parseFloat(a); ns.push(e.querySelector('.o-note').value); }
@@ -139,51 +170,35 @@
         };
 
         try {
-            const r = await fetch(SCRIPT_URL, { method: 'POST', body: JSON.stringify(p) });
-            alert(await r.text()); location.reload();
-        } catch (e) { alert("Lỗi!"); b.disabled = false; b.innerText = "LƯU LẠI"; }
+            await fetch(SCRIPT_URL, { method: 'POST', body: JSON.stringify(p) });
+            alert("Lưu thành công!"); location.reload();
+        } catch (e) { alert("Lỗi!"); b.disabled = false; }
     }
 
-    function openTab(id, el) {
+    function openTab(n, el) {
         document.querySelectorAll('.content').forEach(c => c.classList.remove('active'));
         document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
-        document.getElementById(id).classList.add('active');
+        document.getElementById(n).classList.add('active');
         el.classList.add('active');
-        if(id === 'report') load();
+        if(n === 'report') load();
     }
 
     async function load() {
-        const filter = document.getElementById('m-filter').value;
+        const f = document.getElementById('m-filter').value;
         const b = document.getElementById('res'); b.innerHTML = 'Đang tải...';
         try {
-            const res = await fetch(SCRIPT_URL); const data = await res.json(); window.raw = data;
+            const res = await fetch(SCRIPT_URL); const data = await res.json();
             let h = '', sR = 0, sE = 0, sD = 0;
-            data.filter(x => x[0].toString().indexOf(filter) === 0).reverse().forEach(x => {
+            data.filter(x => x[0].startsWith(f)).reverse().forEach(x => {
                 const dv = parseFloat(x[9])||0, rv = parseFloat(x[1])||0, ev = (parseFloat(x[7])||0)+(parseFloat(x[8])||0);
                 sR += rv; sE += ev; sD += dv;
-                h += `<tr><td class="txt-left" onclick="view('${x[0]}')" style="color:#007bff; text-decoration:underline; font-weight:bold">${x[0].split('-')[2]}</td>
-                <td class="${dv<0?'txt-green':(dv>0?'txt-red':'')}">${new Intl.NumberFormat().format(dv)}</td>
-                <td>${new Intl.NumberFormat().format(rv)}</td><td>${new Intl.NumberFormat().format(ev)}</td></tr>`;
+                h += `<tr><td style="text-align:left">${x[0].split('-')[2]}</td><td class="${dv<0?'txt-green':(dv>0?'txt-red':'')}">${new Intl.NumberFormat().format(dv)}</td><td>${new Intl.NumberFormat().format(rv)}</td><td>${new Intl.NumberFormat().format(ev)}</td></tr>`;
             });
-            b.innerHTML = h || 'Tháng này chưa có dữ liệu';
+            b.innerHTML = h || 'Trống';
             document.getElementById('sum-r').innerText = new Intl.NumberFormat().format(sR);
             document.getElementById('sum-e').innerText = new Intl.NumberFormat().format(sE);
-            const sd = document.getElementById('sum-d'); sd.innerText = new Intl.NumberFormat().format(sD);
-            sd.className = sD < 0 ? "txt-green" : "txt-red";
-        } catch(e) { b.innerHTML = 'Lỗi kết nối!'; }
-    }
-
-    function view(d) {
-        const r = window.raw.find(i => i[0].toString() === d);
-        if(!r) return;
-        document.getElementById('date').value = r[0];
-        document.getElementById('total_rev').value = r[1];
-        document.getElementById('shopee').value = r[2]; document.getElementById('grab').value = r[3]; document.getElementById('be').value = r[4];
-        document.getElementById('transfer').value = r[5]; document.getElementById('cash').value = r[6];
-        document.getElementById('expense').value = r[7]; document.getElementById('other-list').innerHTML = '';
-        addOther(); document.querySelector('.o-amt').value = r[8];
-        document.getElementById('n_rev').value = r[10]; cal(); 
-        document.getElementById('tab-in').click();
+            document.getElementById('sum-d').innerText = new Intl.NumberFormat().format(sD);
+        } catch(e) { b.innerHTML = 'Lỗi!'; }
     }
 </script>
 </body>
