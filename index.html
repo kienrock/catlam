@@ -3,49 +3,66 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Thu Chi Kiên - Fix</title>
+    <title>Quản Lý Thu Chi - Kiên K80</title>
     <style>
-        body { font-family: sans-serif; margin: 0; background: #f4f6f8; font-size: 14px; }
-        .header { background: #007bff; color: white; padding: 15px; text-align: center; font-weight: bold; position: sticky; top: 0; z-index: 100; }
+        body { font-family: -apple-system, sans-serif; margin: 0; background: #f4f6f8; color: #333; line-height: 1.5; }
+        .header { background: #007bff; color: white; padding: 15px; text-align: center; font-weight: bold; position: sticky; top: 0; z-index: 100; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
         .tabs { display: flex; background: white; border-bottom: 1px solid #ddd; position: sticky; top: 48px; z-index: 99; }
-        .tab { flex: 1; padding: 15px; text-align: center; cursor: pointer; color: #888; }
+        .tab { flex: 1; padding: 15px; text-align: center; cursor: pointer; color: #888; font-size: 14px; transition: 0.3s; }
         .tab.active { color: #007bff; border-bottom: 3px solid #007bff; font-weight: bold; }
         .content { display: none; padding: 15px; max-width: 500px; margin: auto; }
         .content.active { display: block; }
-        .group { background: white; padding: 12px; border-radius: 8px; margin-bottom: 10px; box-shadow: 0 1px 2px rgba(0,0,0,0.1); }
-        .title { font-size: 0.8em; font-weight: bold; color: #007bff; margin-bottom: 8px; display: block; }
-        .in-row { display: flex; gap: 5px; margin-bottom: 8px; }
-        input { flex: 2; padding: 12px; border: 1px solid #ddd; border-radius: 6px; font-size: 16px; width: 100%; box-sizing: border-box; }
-        input.note { flex: 3; font-size: 12px; background: #f9f9f9; }
-        .btn-save { background: #28a745; color: white; width: 100%; padding: 16px; border: none; border-radius: 8px; font-size: 18px; font-weight: bold; }
-        .summary-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 5px; margin-bottom: 15px; }
-        .s-card { background: white; padding: 10px; border-radius: 8px; text-align: center; font-size: 0.7em; border: 1px solid #eee; }
-        table { width: 100%; border-collapse: collapse; background: white; }
-        th, td { border-bottom: 1px solid #eee; padding: 12px 5px; text-align: right; }
+        
+        /* Form nhập liệu */
+        .group { background: white; padding: 15px; border-radius: 10px; margin-bottom: 12px; box-shadow: 0 1px 3px rgba(0,0,0,0.1); }
+        .title { font-size: 0.8em; font-weight: bold; color: #007bff; margin-bottom: 10px; display: block; text-transform: uppercase; letter-spacing: 0.5px; }
+        .in-row { display: flex; gap: 8px; margin-bottom: 10px; align-items: center; }
+        input { flex: 2; padding: 12px; border: 1px solid #ddd; border-radius: 8px; font-size: 16px; width: 100%; box-sizing: border-box; outline: none; -webkit-appearance: none; }
+        input:focus { border-color: #007bff; box-shadow: 0 0 0 2px rgba(0,123,255,0.1); }
+        input.note { flex: 3; font-size: 13px; background: #f8f9fa; color: #666; }
+        .btn-add { background: none; border: 1px dashed #007bff; color: #007bff; width: 100%; padding: 10px; border-radius: 8px; font-weight: bold; margin-bottom: 10px; cursor: pointer; }
+        .btn-save { background: #28a745; color: white; width: 100%; padding: 18px; border: none; border-radius: 10px; font-size: 18px; font-weight: bold; cursor: pointer; transition: 0.3s; }
+        .btn-save:active { transform: scale(0.98); background: #218838; }
+        .diff-box { background: #343a40; color: white; padding: 18px; border-radius: 10px; display: flex; justify-content: space-between; align-items: center; margin-top: 15px; }
+
+        /* Bảng tổng hợp */
+        .filter-bar { background: white; padding: 12px; border-radius: 10px; margin-bottom: 15px; display: flex; align-items: center; gap: 10px; box-shadow: 0 1px 3px rgba(0,0,0,0.1); }
+        .summary-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 8px; margin-bottom: 15px; }
+        .s-card { background: white; padding: 12px 5px; border-radius: 10px; text-align: center; box-shadow: 0 1px 3px rgba(0,0,0,0.1); }
+        .s-card span { font-size: 0.7em; color: #888; display: block; margin-bottom: 4px; }
+        .s-card b { font-size: 0.9em; word-break: break-all; }
+        
+        table { width: 100%; border-collapse: collapse; background: white; border-radius: 10px; overflow: hidden; box-shadow: 0 1px 3px rgba(0,0,0,0.1); }
+        th, td { border-bottom: 1px solid #eee; padding: 12px 8px; text-align: right; font-size: 13px; }
+        th { background: #f8f9fa; color: #888; font-size: 11px; text-transform: uppercase; }
         .txt-left { text-align: left; }
         .txt-green { color: #28a745; font-weight: bold; }
         .txt-red { color: #dc3545; font-weight: bold; }
+        .btn-print { background: #6c757d; color: white; width: 100%; padding: 12px; border: none; border-radius: 8px; margin-bottom: 15px; font-weight: bold; cursor: pointer; }
+
         @media print {
-            .header, .tabs, button, input, .filter-bar { display: none !important; }
-            .content { display: block !important; width: 100% !important; margin: 0 !important; }
+            .header, .tabs, .filter-bar, button, .btn-save { display: none !important; }
+            .content { display: block !important; width: 100% !important; margin: 0 !important; padding: 0 !important; }
             @page { size: 80mm auto; margin: 0; }
-            table { font-size: 11px !important; }
-            td, th { border: 1px solid #000 !important; }
+            body { background: white; }
+            table { font-size: 11px !important; width: 100% !important; }
+            td, th { border: 1px solid #000 !important; padding: 5px 2px !important; }
+            .content::before { content: "BÁO CÁO THU CHI K80"; display: block; text-align: center; font-weight: bold; margin: 10px 0; font-size: 16px; }
         }
     </style>
 </head>
 <body>
 
-<div class="header">QUẢN LÝ THU CHI</div>
+<div class="header">HỆ THỐNG KIÊN K80</div>
 <div class="tabs">
-    <div class="tab active" onclick="openTab('input', this)">NHẬP LIỆU</div>
-    <div class="tab" onclick="openTab('report', this)">TỔNG HỢP</div>
+    <div id="tab1" class="tab active" onclick="openTab('input', this)">NHẬP LIỆU</div>
+    <div id="tab2" class="tab" onclick="openTab('report', this)">TỔNG HỢP</div>
 </div>
 
 <div id="input" class="content active">
-    <div class="group"><span class="title">Ngày</span><input type="date" id="date"></div>
+    <div class="group"><span class="title">Ngày hạch toán</span><input type="date" id="date"></div>
     <div class="group"><span class="title">Doanh thu</span>
-        <div class="in-row"><input type="number" id="total_rev" oninput="cal()"><input type="text" id="n_rev" class="note" placeholder="Ghi chú"></div>
+        <div class="in-row"><input type="number" id="total_rev" placeholder="0" oninput="cal()"><input type="text" id="n_rev" class="note" placeholder="Ghi chú"></div>
     </div>
     <div class="group"><span class="title">App (Shopee/Grab/Be)</span>
         <div class="in-row"><input type="number" id="shopee" placeholder="Shopee" oninput="cal()"><input type="text" id="n_shopee" class="note"></div>
@@ -54,49 +71,50 @@
     </div>
     <div class="group"><span class="title">CK & Tiền mặt</span>
         <div class="in-row"><input type="number" id="transfer" placeholder="CK" oninput="cal()"><input type="text" id="n_transfer" class="note"></div>
-        <div class="in-row"><input type="number" id="cash" placeholder="TM" oninput="cal()"><input type="text" id="n_cash" class="note"></div>
+        <div class="in-row"><input type="number" id="cash" placeholder="Tiền mặt" oninput="cal()"><input type="text" id="n_cash" class="note"></div>
     </div>
     <div class="group"><span class="title">Chi & Khác</span>
-        <div class="in-row"><input type="number" id="expense" placeholder="Chi" oninput="cal()"><input type="text" id="n_expense" class="note"></div>
+        <div class="in-row"><input type="number" id="expense" placeholder="Tổng chi" oninput="cal()"><input type="text" id="n_expense" class="note"></div>
         <div id="other-list"></div>
-        <button onclick="addOther()" style="width:100%; border:1px dashed #ccc; background:none; padding:8px; border-radius:5px">+ Thêm Khác</button>
+        <button class="btn-add" onclick="addOtherRow()">+ THÊM KHOẢN KHÁC</button>
     </div>
-    <div style="background:#333; color:#fff; padding:15px; border-radius:8px; display:flex; justify-content:space-between">
-        <span>CHÊNH LỆCH:</span><b id="diff-val">0</b>
-    </div>
-    <button id="btnSave" class="btn-save" style="margin-top:15px" onclick="send()">LƯU DỮ LIỆU</button>
+    <div class="diff-box"><span>CHÊNH LỆCH:</span><b id="diff-val">0</b></div>
+    <button id="btnSave" class="btn-save" style="margin-top:15px" onclick="sendData()">LƯU DỮ LIỆU</button>
 </div>
 
 <div id="report" class="content">
-    <div class="filter-bar" style="margin-bottom:10px">
-        <label>Tháng:</label><input type="month" id="m-filter" onchange="load()">
-    </div>
+    <div class="filter-bar"><label style="font-weight:bold">Tháng:</label><input type="month" id="m-filter" onchange="loadReport()" style="flex:1; border:1px solid #ddd; padding:8px; border-radius:5px"></div>
     <div class="summary-grid">
-        <div class="s-card">DT<br><b id="sum-r" class="txt-green">0</b></div>
-        <div class="s-card">Chi/K<br><b id="sum-e" class="txt-red">0</b></div>
-        <div class="s-card">Chênh<br><b id="sum-d">0</b></div>
+        <div class="s-card"><span>Doanh Thu</span><b id="sum-r" class="txt-green">0</b></div>
+        <div class="s-card"><span>Chi/Khác</span><b id="sum-e" class="txt-red">0</b></div>
+        <div class="s-card"><span>Chênh Lệch</span><b id="sum-d">0</b></div>
     </div>
-    <button onclick="window.print()" style="width:100%; padding:10px; margin-bottom:10px">🖨️ IN K80</button>
-    <table>
-        <thead><tr><th class="txt-left">Ngày</th><th>Chênh</th><th>DT</th><th>Chi</th></tr></thead>
-        <tbody id="res"></tbody>
-    </table>
+    <button class="btn-print" onclick="window.print()">🖨️ IN BẢO CÁO K80</button>
+    <div style="overflow-x:auto">
+        <table>
+            <thead><tr><th class="txt-left">Ngày</th><th>Chênh</th><th>DT</th><th>Chi</th></tr></thead>
+            <tbody id="res"></tbody>
+        </table>
+    </div>
 </div>
 
 <script>
-    const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwlayEKgxe5PJbmePdYJf0Lm6IMJ9X36IUevkyzNcEtcy71h44RFMxmtExpwT4fhzOT/exec";
+    // DÁN LINK GOOGLE APPS SCRIPT CỦA BẠN VÀO ĐÂY
+    const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyWlcIPZJa6kf1c3qJaV721LMvPx791mv2Zuk98HCHp9foXrzbLafOwzBJq9idPaxK_/exec";
 
-    // Khởi tạo ngày
-    const dObj = new Date();
-    document.getElementById('date').value = dObj.toISOString().split('T')[0];
-    document.getElementById('m-filter').value = dObj.toISOString().slice(0, 7);
+    // Khởi tạo ngày hôm nay
+    const d = new Date();
+    const tzOffset = d.getTimezoneOffset() * 60000; 
+    const localISODate = (new Date(d - tzOffset)).toISOString();
+    document.getElementById('date').value = localISODate.split('T')[0];
+    document.getElementById('m-filter').value = localISODate.slice(0, 7);
 
-    function addOther() {
-        const d = document.createElement('div'); d.className = 'in-row o-item';
-        d.innerHTML = '<input type="number" class="o-amt" placeholder="Khác" oninput="cal()"><input type="text" class="o-note" placeholder="Ghi chú">';
-        document.getElementById('other-list').appendChild(d);
+    function addOtherRow() {
+        const div = document.createElement('div'); div.className = 'in-row o-item';
+        div.innerHTML = '<input type="number" class="o-amt" placeholder="Khác" oninput="cal()"><input type="text" class="o-note" placeholder="Ghi chú">';
+        document.getElementById('other-list').appendChild(div);
     }
-    addOther();
+    addOtherRow();
 
     function cal() {
         const gV = (id) => parseFloat(document.getElementById(id).value) || 0;
@@ -105,8 +123,8 @@
         document.getElementById('diff-val').innerText = new Intl.NumberFormat().format(diff.toFixed(0));
     }
 
-    async function send() {
-        const b = document.getElementById('btnSave'); b.disabled = true; b.innerText = "ĐANG GỬI...";
+    async function sendData() {
+        const b = document.getElementById('btnSave'); b.disabled = true; b.innerText = "ĐANG LƯU...";
         let ns = [];
         ['rev','shopee','grab','be','transfer','cash','expense'].forEach(id => {
             let v = document.getElementById('n_'+id).value; if(v) ns.push(v);
@@ -126,72 +144,54 @@
 
         try {
             const r = await fetch(SCRIPT_URL, { method: 'POST', body: JSON.stringify(p) });
-            alert(await r.text()); location.reload();
-        } catch (e) { alert("Lỗi lưu dữ liệu!"); b.disabled = false; }
+            const msg = await r.text(); alert(msg); location.reload();
+        } catch (e) { alert("Lỗi kết nối Server!"); b.disabled = false; b.innerText = "LƯU DỮ LIỆU"; }
     }
 
-    function openTab(tabId, el) {
+    function openTab(id, el) {
         document.querySelectorAll('.content').forEach(c => c.classList.remove('active'));
         document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
-        document.getElementById(tabId).classList.add('active');
+        document.getElementById(id).classList.add('active');
         el.classList.add('active');
-        if(tabId === 'report') load();
+        if(id === 'report') loadReport();
     }
 
-    async function load() {
-        const filterMonth = document.getElementById('m-filter').value; // yyyy-mm
-        const b = document.getElementById('res'); 
-        b.innerHTML = '<tr><td colspan="4">Đang tải dữ liệu...</td></tr>';
-        
+    async function loadReport() {
+        const f = document.getElementById('m-filter').value;
+        const b = document.getElementById('res'); b.innerHTML = '<tr><td colspan="4">Đang tải dữ liệu...</td></tr>';
         try {
-            const res = await fetch(SCRIPT_URL); 
-            const data = await res.json(); 
-            window.raw = data;
+            const res = await fetch(SCRIPT_URL); const data = await res.json(); window.raw = data;
+            let h = '', sR = 0, sE = 0, sD = 0;
+            // Lọc dữ liệu chính xác bằng cách ép về chuỗi string yyyy-mm
+            const filtered = data.filter(row => row[0] && row[0].toString().substring(0, 7) === f);
             
-            let html = '', sR = 0, sE = 0, sD = 0;
-            
-            // Lọc chính xác theo chuỗi yyyy-mm
-            const filtered = data.filter(row => row[0] && row[0].substring(0, 7) === filterMonth);
-
             filtered.reverse().forEach(row => {
                 const dv = parseFloat(row[9])||0, rv = parseFloat(row[1])||0, ev = (parseFloat(row[7])||0)+(parseFloat(row[8])||0);
                 sR += rv; sE += ev; sD += dv;
-                
-                const dDisplay = row[0].split('-')[2]; // Lấy phần Ngày
-
-                html += `<tr>
-                    <td class="txt-left" onclick="view('${row[0]}')" style="color:#007bff; text-decoration:underline; font-weight:bold">${dDisplay}</td>
-                    <td class="${dv<0?'txt-green':(dv>0?'txt-red':'')}">${new Intl.NumberFormat().format(dv)}</td>
-                    <td>${new Intl.NumberFormat().format(rv)}</td>
-                    <td>${new Intl.NumberFormat().format(ev)}</td>
-                </tr>`;
+                const dDisplay = row[0].toString().split('-')[2];
+                h += `<tr><td class="txt-left" onclick="view('${row[0]}')" style="color:#007bff; text-decoration:underline; font-weight:bold">${dDisplay}</td>
+                <td class="${dv<0?'txt-green':(dv>0?'txt-red':'')}">${new Intl.NumberFormat().format(dv)}</td>
+                <td>${new Intl.NumberFormat().format(rv)}</td><td>${new Intl.NumberFormat().format(ev)}</td></tr>`;
             });
-
-            b.innerHTML = html || '<tr><td colspan="4">Tháng này chưa có dữ liệu</td></tr>';
+            b.innerHTML = h || '<tr><td colspan="4">Tháng này chưa có dữ liệu</td></tr>';
             document.getElementById('sum-r').innerText = new Intl.NumberFormat().format(sR);
             document.getElementById('sum-e').innerText = new Intl.NumberFormat().format(sE);
-            const sd = document.getElementById('sum-d');
-            sd.innerText = new Intl.NumberFormat().format(sD);
+            const sd = document.getElementById('sum-d'); sd.innerText = new Intl.NumberFormat().format(sD);
             sd.className = sD < 0 ? "txt-green" : "txt-red";
-        } catch(e) { b.innerHTML = 'Lỗi tải! Hãy kiểm tra kết nối.'; }
+        } catch(e) { b.innerHTML = '<tr><td colspan="4">Lỗi kết nối Google Sheets!</td></tr>'; }
     }
 
-    function view(dateStr) {
-        const r = window.raw.find(i => i[0] === dateStr);
+    function view(d) {
+        const r = window.raw.find(i => i[0].toString() === d);
         if(!r) return;
         document.getElementById('date').value = r[0];
         document.getElementById('total_rev').value = r[1];
-        document.getElementById('shopee').value = r[2]; 
-        document.getElementById('grab').value = r[3]; 
-        document.getElementById('be').value = r[4];
-        document.getElementById('transfer').value = r[5]; 
-        document.getElementById('cash').value = r[6];
-        document.getElementById('expense').value = r[7]; 
-        document.getElementById('other-list').innerHTML = '';
-        addOther(); document.querySelector('.o-amt').value = r[8];
-        document.getElementById('n_rev').value = r[10]; 
-        cal(); 
-        document.querySelectorAll('.tab')[0].click(); // Quay về Tab Nhập
+        document.getElementById('shopee').value = r[2]; document.getElementById('grab').value = r[3]; document.getElementById('be').value = r[4];
+        document.getElementById('transfer').value = r[5]; document.getElementById('cash').value = r[6];
+        document.getElementById('expense').value = r[7]; document.getElementById('other-list').innerHTML = '';
+        addOtherRow(); document.querySelector('.o-amt').value = r[8];
+        document.getElementById('n_rev').value = r[10]; cal(); 
+        document.querySelectorAll('.tab')[0].click(); // Về tab Nhập
     }
 </script>
 </body>
