@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Hệ Thống Kiên K80 - Chốt Tiền</title>
+    <title>Hệ Thống Kiên K80 - In Gọn</title>
     <style>
         body { font-family: -apple-system, sans-serif; margin: 0; background: #f4f6f8; color: #333; }
         .header { background: #007bff; color: white; padding: 10px; text-align: center; font-weight: bold; }
@@ -22,7 +22,6 @@
         .btn-save { background: #28a745; color: white; width: 100%; padding: 16px; border: none; border-radius: 8px; font-size: 18px; font-weight: bold; margin-top: 10px; cursor: pointer; }
         .btn-print { background: #343a40; color: white; width: 100%; padding: 14px; border: none; border-radius: 8px; font-weight: bold; margin-top: 8px; cursor: pointer; }
         
-        /* KHỐI CHÊNH LỆCH CĂN GIỮA */
         .diff-container { background: #343a40; color: white; padding: 15px; border-radius: 10px; text-align: center; margin-top: 10px; }
         .diff-label { font-size: 14px; color: #ccc; display: block; margin-bottom: 2px; }
         #diff-val { font-size: 32px; font-weight: 900; display: block; line-height: 1.1; margin: 5px 0; }
@@ -35,39 +34,43 @@
         table { width: 100%; border-collapse: collapse; background: white; font-size: 13px; }
         th, td { border-bottom: 1px solid #eee; padding: 12px 5px; text-align: right; }
 
-        /* CẤU HÌNH IN K80 */
+        /* CẤU HÌNH IN K80 - CO DÒNG LẠI TỐI ĐA */
         @media print {
             header, .header, .tabs, .btn-save, .btn-print, #report, .note, button, .tab { display: none !important; }
             #input { display: block !important; width: 100% !important; margin: 0 !important; padding: 0 !important; }
             body { background: white; color: black !important; }
             @page { size: 80mm auto; margin: 0; }
             
-            .group { box-shadow: none !important; border-bottom: 1px dashed black !important; padding: 6px 0 !important; margin: 0 !important; }
-            .in-row { padding: 4px 0 !important; }
-            .label-text { font-size: 15px !important; color: black !important; }
+            .group { 
+                box-shadow: none !important; 
+                border-bottom: 1px solid black !important; 
+                padding: 1px 0 !important; /* Ép sát dòng */
+                margin: 0 !important; 
+            }
+            .in-row { padding: 1px 0 !important; margin: 0 !important; }
+            .label-text { font-size: 14px !important; color: black !important; }
             
-            input { border: none !important; background: transparent !important; font-weight: 900 !important; font-size: 18px !important; color: black !important; text-align: right !important; }
+            input { border: none !important; background: transparent !important; font-weight: 900 !important; font-size: 16px !important; color: black !important; text-align: right !important; padding: 0 !important; }
 
             .diff-container { 
                 background: white !important; 
-                border: 3px solid black !important; 
+                border: 2px solid black !important; 
                 color: black !important; 
-                padding: 10px 0 !important; 
-                margin-top: 10px !important;
-                display: block !important;
+                padding: 4px 0 !important; 
+                margin-top: 5px !important;
             }
-            #diff-val { font-size: 36px !important; color: black !important; text-align: center !important; }
-            .status-small { color: black !important; font-size: 16px !important; text-align: center !important; }
+            #diff-val { font-size: 32px !important; color: black !important; text-align: center !important; margin: 2px 0 !important; }
+            .status-small { color: black !important; font-size: 14px !important; text-align: center !important; margin: 0 !important; }
             
             #input::before { 
                 content: "CHỐT TIỀN CUỐI NGÀY"; 
                 display: block; 
                 text-align: center; 
                 font-weight: 900; 
-                font-size: 20px; 
+                font-size: 18px; 
                 border-bottom: 2px solid black;
-                margin-bottom: 10px;
-                padding-bottom: 8px;
+                margin-bottom: 5px;
+                padding-bottom: 5px;
             }
         }
     </style>
