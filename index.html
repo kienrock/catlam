@@ -3,80 +3,73 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Thu Chi Kiên K80 - Đen Trắng</title>
+    <title>KIÊN K80 - CHUẨN 100%</title>
     <style>
         body { font-family: sans-serif; margin: 0; background: #f4f6f8; color: #333; }
-        .header { background: #007bff; color: white; padding: 10px; text-align: center; font-weight: bold; position: sticky; top: 0; z-index: 100; }
-        .tabs { display: flex; background: white; border-bottom: 1px solid #ddd; position: sticky; top: 38px; z-index: 99; }
-        .tab { flex: 1; padding: 12px; text-align: center; cursor: pointer; color: #888; font-size: 14px; }
-        .tab.active { color: #007bff; border-bottom: 3px solid #007bff; font-weight: bold; }
+        .header { background: #007bff; color: white; padding: 10px; text-align: center; font-weight: bold; }
+        .tabs { display: flex; background: white; border-bottom: 1px solid #ddd; position: sticky; top: 0; z-index: 100; }
+        .tab { flex: 1; padding: 15px; text-align: center; cursor: pointer; color: #888; font-size: 14px; font-weight: bold; }
+        .tab.active { color: #007bff; border-bottom: 3px solid #007bff; }
         .content { display: none; padding: 10px; max-width: 500px; margin: auto; }
         .content.active { display: block; }
         .group { background: white; padding: 10px; border-radius: 8px; margin-bottom: 8px; box-shadow: 0 1px 2px rgba(0,0,0,0.1); }
-        .group-title { font-size: 11px; font-weight: bold; color: #007bff; margin-bottom: 5px; display: block; text-transform: uppercase; }
         .in-row { display: flex; gap: 5px; margin-bottom: 5px; align-items: center; }
-        .label-text { width: 90px; font-size: 13px; font-weight: bold; color: #555; flex-shrink: 0; }
-        input { flex: 1; padding: 10px; border: 1px solid #ddd; border-radius: 5px; font-size: 16px; width: 100%; box-sizing: border-box; text-align: right; }
-        input.note { flex: 1.5; font-size: 12px; background: #f9f9f9; text-align: left; }
-        .btn-save { background: #28a745; color: white; width: 100%; padding: 15px; border: none; border-radius: 8px; font-size: 18px; font-weight: bold; margin-bottom: 10px; cursor: pointer; }
-        .btn-print { background: #6c757d; color: white; width: 100%; padding: 12px; border: none; border-radius: 8px; font-weight: bold; cursor: pointer; }
-        .diff-container { background: #343a40; color: white; padding: 10px; border-radius: 8px; text-align: center; margin-top: 5px; }
-        .status-big { font-size: 1.1em; font-weight: bold; display: block; }
-        .txt-xanh { color: #2ecc71; } .txt-do { color: #e74c3c; }   
+        .label-text { width: 90px; font-size: 13px; font-weight: bold; color: #555; }
+        input { flex: 1; padding: 10px; border: 1px solid #ddd; border-radius: 5px; font-size: 16px; text-align: right; }
+        input.note { font-size: 12px; background: #f9f9f9; text-align: left; margin-top: 5px; width: 100%; display: block; box-sizing: border-box; }
+        .btn-save { background: #28a745; color: white; width: 100%; padding: 15px; border: none; border-radius: 8px; font-size: 18px; font-weight: bold; margin-top: 10px; }
+        .btn-print { background: #6c757d; color: white; width: 100%; padding: 12px; border: none; border-radius: 8px; font-weight: bold; margin-top: 10px; }
+        .diff-container { background: #343a40; color: white; padding: 10px; border-radius: 8px; text-align: center; }
+        .status-big { font-size: 1.1em; font-weight: bold; display: block; margin-top: 5px; }
+        .txt-do { color: #e74c3c; } .txt-xanh { color: #2ecc71; }
         .summary-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 5px; margin-bottom: 10px; }
-        .s-card { background: white; padding: 10px 2px; border-radius: 8px; text-align: center; font-size: 11px; box-shadow: 0 1px 2px rgba(0,0,0,0.1); border-top: 3px solid #007bff; }
+        .s-card { background: white; padding: 10px 2px; border-radius: 8px; text-align: center; font-size: 11px; border-top: 3px solid #007bff; }
         table { width: 100%; border-collapse: collapse; background: white; font-size: 12px; }
         th, td { border-bottom: 1px solid #eee; padding: 10px 4px; text-align: right; }
 
-        /* PHẦN IN TỐI ƯU K80: GẦN NHAU, MÀU ĐEN, CĂN PHẢI */
         @media print {
-            .header, .tabs, button, .btn-save, .btn-print, .filter-bar, #report, input.note, .btn-add { display: none !important; }
+            .header, .tabs, button, .btn-save, .btn-print, .filter-bar, #report, input.note { display: none !important; }
             #input.content { display: block !important; width: 100% !important; margin: 0 !important; padding: 0 !important; }
             body { background: white; color: black !important; }
             @page { size: 80mm auto; margin: 0; }
-            .group { box-shadow: none !important; border-bottom: 1px solid #000; padding: 2px 0 !important; margin-bottom: 2px !important; }
-            .group-title { font-size: 10px; color: black !important; margin-bottom: 2px; }
-            .in-row { display: flex !important; justify-content: space-between !important; width: 100%; margin-bottom: 0 !important; }
-            .label-text { width: auto !important; color: black !important; font-size: 12px; }
-            input { border: none !important; font-weight: bold !important; font-size: 15px !important; text-align: right !important; color: black !important; background: transparent !important; padding: 0 !important; height: auto !important; }
-            .diff-container { background: white !important; color: black !important; border-top: 2px solid black; border-bottom: 2px solid black; padding: 5px 0; margin-top: 5px; }
-            .status-big { color: black !important; font-size: 14px; }
-            #input::before { content: "BIÊN LAI THU CHI"; display: block; text-align: center; font-weight: bold; font-size: 16px; margin-bottom: 5px; }
+            .group { border-bottom: 1px dashed #000; padding: 2px 0; margin-bottom: 2px; }
+            .in-row { display: flex !important; justify-content: space-between !important; width: 100%; }
+            input { border: none !important; font-weight: bold !important; font-size: 16px !important; text-align: right !important; color: black !important; }
+            .diff-container { background: white !important; color: black !important; border-top: 2px solid black; border-bottom: 2px solid black; }
         }
     </style>
 </head>
 <body>
 
-<div class="header">QUẢN LÝ THU CHI KIÊN</div>
 <div class="tabs">
     <div id="tab-in" class="tab active" onclick="openTab('input', this)">NHẬP LIỆU</div>
     <div id="tab-re" class="tab" onclick="openTab('report', this)">TỔNG HỢP</div>
 </div>
 
 <div id="input" class="content active">
-    <div class="group"><span class="group-title">Thời gian</span><div class="in-row"><span class="label-text">Ngày:</span><input type="date" id="date"></div></div>
-    <div class="group"><span class="group-title">1.1 Doanh Thu</span><div class="in-row"><span class="label-text">Tổng DT:</span><input type="number" id="total_rev" oninput="cal()"></div><input type="text" id="n_rev" class="note" placeholder="Ghi chú..."></div>
-    <div class="group"><span class="group-title">1.2 Tiền App</span>
+    <div class="group"><div class="in-row"><span class="label-text">Ngày:</span><input type="date" id="date"></div></div>
+    <div class="group"><div class="in-row"><span class="label-text">Tổng DT:</span><input type="number" id="total_rev" oninput="cal()"></div><input type="text" id="n_rev" class="note" placeholder="Ghi chú DT..."></div>
+    <div class="group">
         <div class="in-row"><span class="label-text">Shopee:</span><input type="number" id="shopee" oninput="cal()"></div>
         <div class="in-row"><span class="label-text">Grab:</span><input type="number" id="grab" oninput="cal()"></div>
         <div class="in-row"><span class="label-text">Be:</span><input type="number" id="be" oninput="cal()"></div>
     </div>
-    <div class="group"><span class="group-title">1.3 Bank & Tiền mặt</span>
+    <div class="group">
         <div class="in-row"><span class="label-text">Bank CK:</span><input type="number" id="transfer" oninput="cal()"></div>
         <div class="in-row"><span class="label-text">Tiền mặt:</span><input type="number" id="cash" oninput="cal()"></div>
     </div>
-    <div class="group"><span class="group-title">2 Chi & 3 Khác</span>
+    <div class="group">
         <div class="in-row"><span class="label-text">Tổng chi:</span><input type="number" id="expense" oninput="cal()"></div>
         <div class="in-row"><span class="label-text">Khác:</span><input type="number" id="other_val" oninput="cal()"></div>
         <input type="text" id="n_other" class="note" placeholder="Ghi chú khác...">
     </div>
     <div class="diff-container"><div style="display:flex; justify-content:space-between"><span>CHÊNH LỆCH:</span><b id="diff-val">0</b></div><span id="status-label" class="status-big">--</span></div>
-    <button id="btnSave" class="btn-save" style="margin-top:15px" onclick="send()">LƯU DỮ LIỆU</button>
+    <button id="btnSave" class="btn-save" onclick="send()">LƯU DỮ LIỆU</button>
     <button class="btn-print" onclick="window.print()">🖨️ IN BIÊN LAI (K80)</button>
 </div>
 
 <div id="report" class="content">
-    <input type="month" id="m-filter" onchange="load()" style="width:100%; margin-bottom:10px; padding:10px; border-radius:5px; border:1px solid #ddd; text-align:center">
+    <input type="month" id="m-filter" onchange="load()" style="width:100%; margin-bottom:10px; padding:10px; text-align:center">
     <div class="summary-grid">
         <div class="s-card"><span>Tổng DT</span><b id="sum-r" class="txt-xanh">0</b></div>
         <div class="s-card"><span>Tổng Chi</span><b id="sum-e" class="txt-do">0</b></div>
@@ -86,10 +79,11 @@
 </div>
 
 <script>
-    const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzshMqkhyZCR_vXa6mJwGPg95EaHRByfBM-wJa7n9l6iz3KGz_omAxudJTl3f0mT4im/exec";
+    const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzbYo8KOLuYQJkcxgj_hIyYN4er3IkDAJajkbzM2gpFMo6WOjDTiBbMHpxvWrZ9ebZV/exec";
 
-    const dObj = new Date();
-    const today = dObj.toLocaleDateString('en-CA'); 
+    // Khởi tạo ngày
+    const d = new Date();
+    const today = d.toLocaleDateString('sv-SE'); 
     document.getElementById('date').value = today;
     document.getElementById('m-filter').value = today.slice(0, 7);
 
@@ -104,7 +98,7 @@
     }
 
     async function send() {
-        const b = document.getElementById('btnSave'); b.disabled = true; b.innerText = "ĐANG LƯU...";
+        const b = document.getElementById('btnSave'); b.disabled = true; b.innerText = "ĐANG GỬI...";
         const payload = {
             date: document.getElementById('date').value,
             total_rev: document.getElementById('total_rev').value || 0,
@@ -117,7 +111,7 @@
         try {
             const r = await fetch(SCRIPT_URL, { method: 'POST', body: JSON.stringify(payload) });
             alert(await r.text()); location.reload();
-        } catch (e) { alert("Lỗi kết nối!"); b.disabled = false; }
+        } catch (e) { alert("Lỗi!"); b.disabled = false; }
     }
 
     function openTab(n, el) {
@@ -129,13 +123,13 @@
     }
 
     async function load() {
-        const f = document.getElementById('m-filter').value;
+        const fMonth = document.getElementById('m-filter').value;
         const b = document.getElementById('res'); b.innerHTML = 'Tải...';
         try {
             const res = await fetch(SCRIPT_URL); const data = await res.json(); window.rawD = data; 
             let h = '', sR = 0, sE = 0, sD = 0;
-            const filtered = data.filter(x => x[0] && x[0].toString().startsWith(f));
-            filtered.reverse().forEach(x => {
+            // Ép so sánh chuỗi yyyy-mm
+            data.filter(x => x[0] && x[0].toString().substring(0,7) === fMonth).reverse().forEach(x => {
                 const dv = parseFloat(x[9])||0;
                 sR += parseFloat(x[1])||0; sE += (parseFloat(x[7])||0)+(parseFloat(x[8])||0); sD += dv;
                 let cClass = dv > 0 ? "txt-do" : (dv < 0 ? "txt-xanh" : "");
