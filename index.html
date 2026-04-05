@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Hệ Thống Kiên K80 - Đảo Phép Tính</title>
+    <title>Hệ Thống Kiên K80 - Đầy Đủ</title>
     <style>
         body { font-family: -apple-system, sans-serif; margin: 0; background: #f4f6f8; color: #333; }
         .header { background: #007bff; color: white; padding: 10px; text-align: center; font-weight: bold; }
@@ -29,8 +29,9 @@
 
         .txt-do { color: #ff4d4d; } .txt-xanh { color: #2ecc71; }
 
-        .summary-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 6px; margin-bottom: 15px; }
-        .s-card { background: white; padding: 10px 2px; border-radius: 8px; text-align: center; border-top: 4px solid #007bff; box-shadow: 0 1px 2px rgba(0,0,0,0.1); }
+        /* PHẦN TỔNG HỢP 4 Ô */
+        .summary-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 15px; }
+        .s-card { background: white; padding: 10px 5px; border-radius: 8px; text-align: center; border-top: 4px solid #007bff; box-shadow: 0 1px 2px rgba(0,0,0,0.1); }
         .s-card span { font-size: 11px; color: #666; font-weight: bold; display: block; margin-bottom: 5px; border-bottom: 1px solid #f0f0f0; padding-bottom: 2px; }
         .s-card b { font-size: 14px; display: block; margin-top: 5px; }
 
@@ -43,12 +44,9 @@
             body { background: white; color: black !important; }
             @page { size: 80mm auto; margin: 0; }
             .group { box-shadow: none !important; border-bottom: 1px solid black !important; padding: 2px 0 !important; margin: 0 !important; }
-            .in-row { padding: 2px 0 !important; margin: 0 !important; }
-            .label-text { font-size: 14px !important; color: black !important; }
             input { border: none !important; background: transparent !important; font-weight: 900 !important; font-size: 16px !important; color: black !important; text-align: right !important; padding: 0 !important; }
             .diff-container { background: white !important; border: 2px solid black !important; color: black !important; padding: 5px 0 !important; margin-top: 5px !important; }
             #diff-val { font-size: 32px !important; color: black !important; text-align: center !important; }
-            .status-small { color: black !important; font-size: 14px !important; text-align: center !important; }
             #input::before { content: "CHỐT TIỀN CUỐI NGÀY"; display: block; text-align: center; font-weight: 900; font-size: 18px; border-bottom: 2px solid black; margin-bottom: 5px; padding-bottom: 5px; }
         }
     </style>
@@ -99,9 +97,10 @@
     </div>
 
     <div class="summary-grid">
-        <div class="s-card"><span>Tổng DT</span><b id="sum-r" style="color:#28a745">0</b></div>
-        <div class="s-card"><span>Tổng Chi</span><b id="sum-e" style="color:#dc3545">0</b></div>
+        <div class="s-card"><span>Tổng Doanh Thu</span><b id="sum-r" style="color:#28a745">0</b></div>
+        <div class="s-card"><span>Tổng Chi/Khác</span><b id="sum-e" style="color:#dc3545">0</b></div>
         <div class="s-card"><span>Chênh Lệch</span><b id="sum-d">0</b></div>
+        <div class="s-card" style="border-top-color: #ffc107;"><span>DT Trung Bình</span><b id="sum-avg">0</b></div>
     </div>
 
     <table>
@@ -119,25 +118,13 @@
 
     function cal() {
         const gV = (id) => parseFloat(document.getElementById(id).value) || 0;
-        
-        // ĐẢO PHÉP TÍNH: (Tiền thực tế + Chi) - Doanh thu
-        // Nếu kết quả > 0 tức là Tiền thực tế đang thừa so với Doanh thu -> Dương tiền
         const thucTe = gV('shopee') + gV('grab') + gV('be') + gV('transfer') + gV('cash') + gV('expense') + gV('other_val');
         const diff = thucTe - gV('total_rev');
-        
         document.getElementById('diff-val').innerText = new Intl.NumberFormat().format(diff.toFixed(0));
         const lb = document.getElementById('status-label');
-        
-        if (diff > 0) { 
-            lb.innerText = "TRẠNG THÁI: DƯƠNG TIỀN (DƯ)"; 
-            lb.className = "status-small txt-xanh"; 
-        } else if (diff < 0) { 
-            lb.innerText = "TRẠNG THÁI: ÂM TIỀN (HỤT)"; 
-            lb.className = "status-small txt-do"; 
-        } else { 
-            lb.innerText = "TRẠNG THÁI: BẰNG"; 
-            lb.className = "status-small"; 
-        }
+        if (diff > 0) { lb.innerText = "TRẠNG THÁI: DƯƠNG TIỀN (DƯ)"; lb.className = "status-small txt-xanh"; }
+        else if (diff < 0) { lb.innerText = "TRẠNG THÁI: ÂM TIỀN (HỤT)"; lb.className = "status-small txt-do"; }
+        else { lb.innerText = "TRẠNG THÁI: BẰNG"; lb.className = "status-small"; }
     }
 
     async function send() {
@@ -170,20 +157,27 @@
         const b = document.getElementById('res'); b.innerHTML = '<tr><td colspan="4">Tải...</td></tr>';
         try {
             const res = await fetch(SCRIPT_URL); const data = await res.json(); window.rawD = data; 
-            let h = '', sR = 0, sE = 0, sD = 0;
+            let h = '', sR = 0, sE = 0, sD = 0, count = 0;
             data.filter(x => x[0] && x[0].toString().startsWith(fMonth)).reverse().forEach(x => {
                 const dv = parseFloat(x[9])||0, rv = parseFloat(x[1])||0, ev = (parseFloat(x[7])||0)+(parseFloat(x[8])||0);
-                sR += rv; sE += ev; sD += dv;
+                sR += rv; sE += ev; sD += dv; count++;
                 let cClass = dv > 0 ? "txt-xanh" : (dv < 0 ? "txt-do" : "");
                 h += `<tr><td style="text-align:left; color:#007bff; text-decoration:underline; font-weight:bold" onclick="viewBack('${x[0]}')">${x[0].split('-')[2]}</td><td class="${cClass}">${new Intl.NumberFormat().format(dv)}</td><td>${new Intl.NumberFormat().format(rv)}</td><td>${new Intl.NumberFormat().format(ev)}</td></tr>`;
             });
             b.innerHTML = h || '<tr><td colspan="4">Trống</td></tr>';
+            
+            // CẬP NHẬT CÁC Ô TỔNG HỢP
             document.getElementById('sum-r').innerText = new Intl.NumberFormat().format(sR);
             document.getElementById('sum-e').innerText = new Intl.NumberFormat().format(sE);
+            
             const sumD = document.getElementById('sum-d');
-            let statusMonth = sD > 0 ? " (Dương)" : (sD < 0 ? " (Âm)" : "");
-            sumD.innerText = new Intl.NumberFormat().format(sD) + statusMonth;
+            sumD.innerText = new Intl.NumberFormat().format(sD) + (sD > 0 ? " (Dương)" : (sD < 0 ? " (Âm)" : ""));
             sumD.className = sD > 0 ? "txt-xanh" : (sD < 0 ? "txt-do" : "");
+            
+            // TÍNH TRUNG BÌNH
+            const avg = count > 0 ? (sR / count) : 0;
+            document.getElementById('sum-avg').innerText = new Intl.NumberFormat().format(avg.toFixed(0));
+
         } catch(e) { b.innerHTML = '<tr><td colspan="4">Lỗi!</td></tr>'; }
     }
 
