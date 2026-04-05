@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Hệ Thống Kiên K80 - In Gọn</title>
+    <title>Hệ Thống Kiên K80 - Đảo Phép Tính</title>
     <style>
         body { font-family: -apple-system, sans-serif; margin: 0; background: #f4f6f8; color: #333; }
         .header { background: #007bff; color: white; padding: 10px; text-align: center; font-weight: bold; }
@@ -22,56 +22,34 @@
         .btn-save { background: #28a745; color: white; width: 100%; padding: 16px; border: none; border-radius: 8px; font-size: 18px; font-weight: bold; margin-top: 10px; cursor: pointer; }
         .btn-print { background: #343a40; color: white; width: 100%; padding: 14px; border: none; border-radius: 8px; font-weight: bold; margin-top: 8px; cursor: pointer; }
         
-        .diff-container { background: #343a40; color: white; padding: 15px; border-radius: 10px; text-align: center; margin-top: 10px; }
-        .diff-label { font-size: 14px; color: #ccc; display: block; margin-bottom: 2px; }
-        #diff-val { font-size: 32px; font-weight: 900; display: block; line-height: 1.1; margin: 5px 0; }
+        .diff-container { background: #343a40; color: white; padding: 12px; border-radius: 10px; text-align: center; margin-top: 10px; }
+        .diff-label { font-size: 13px; color: #ccc; display: block; margin-bottom: 2px; }
+        #diff-val { font-size: 30px; font-weight: 900; display: block; line-height: 1.1; margin: 3px 0; }
         .status-small { font-size: 13px; font-weight: bold; display: block; opacity: 0.9; }
 
         .txt-do { color: #ff4d4d; } .txt-xanh { color: #2ecc71; }
 
-        .summary-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 5px; margin-bottom: 15px; }
-        .s-card { background: white; padding: 10px 2px; border-radius: 8px; text-align: center; border-top: 4px solid #007bff; }
+        .summary-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 6px; margin-bottom: 15px; }
+        .s-card { background: white; padding: 10px 2px; border-radius: 8px; text-align: center; border-top: 4px solid #007bff; box-shadow: 0 1px 2px rgba(0,0,0,0.1); }
+        .s-card span { font-size: 11px; color: #666; font-weight: bold; display: block; margin-bottom: 5px; border-bottom: 1px solid #f0f0f0; padding-bottom: 2px; }
+        .s-card b { font-size: 14px; display: block; margin-top: 5px; }
+
         table { width: 100%; border-collapse: collapse; background: white; font-size: 13px; }
         th, td { border-bottom: 1px solid #eee; padding: 12px 5px; text-align: right; }
 
-        /* CẤU HÌNH IN K80 - CO DÒNG LẠI TỐI ĐA */
         @media print {
             header, .header, .tabs, .btn-save, .btn-print, #report, .note, button, .tab { display: none !important; }
             #input { display: block !important; width: 100% !important; margin: 0 !important; padding: 0 !important; }
             body { background: white; color: black !important; }
             @page { size: 80mm auto; margin: 0; }
-            
-            .group { 
-                box-shadow: none !important; 
-                border-bottom: 1px solid black !important; 
-                padding: 1px 0 !important; /* Ép sát dòng */
-                margin: 0 !important; 
-            }
-            .in-row { padding: 1px 0 !important; margin: 0 !important; }
+            .group { box-shadow: none !important; border-bottom: 1px solid black !important; padding: 2px 0 !important; margin: 0 !important; }
+            .in-row { padding: 2px 0 !important; margin: 0 !important; }
             .label-text { font-size: 14px !important; color: black !important; }
-            
             input { border: none !important; background: transparent !important; font-weight: 900 !important; font-size: 16px !important; color: black !important; text-align: right !important; padding: 0 !important; }
-
-            .diff-container { 
-                background: white !important; 
-                border: 2px solid black !important; 
-                color: black !important; 
-                padding: 4px 0 !important; 
-                margin-top: 5px !important;
-            }
-            #diff-val { font-size: 32px !important; color: black !important; text-align: center !important; margin: 2px 0 !important; }
-            .status-small { color: black !important; font-size: 14px !important; text-align: center !important; margin: 0 !important; }
-            
-            #input::before { 
-                content: "CHỐT TIỀN CUỐI NGÀY"; 
-                display: block; 
-                text-align: center; 
-                font-weight: 900; 
-                font-size: 18px; 
-                border-bottom: 2px solid black;
-                margin-bottom: 5px;
-                padding-bottom: 5px;
-            }
+            .diff-container { background: white !important; border: 2px solid black !important; color: black !important; padding: 5px 0 !important; margin-top: 5px !important; }
+            #diff-val { font-size: 32px !important; color: black !important; text-align: center !important; }
+            .status-small { color: black !important; font-size: 14px !important; text-align: center !important; }
+            #input::before { content: "CHỐT TIỀN CUỐI NGÀY"; display: block; text-align: center; font-weight: 900; font-size: 18px; border-bottom: 2px solid black; margin-bottom: 5px; padding-bottom: 5px; }
         }
     </style>
 </head>
@@ -141,12 +119,25 @@
 
     function cal() {
         const gV = (id) => parseFloat(document.getElementById(id).value) || 0;
-        const diff = gV('total_rev') - (gV('shopee')+gV('grab')+gV('be')) - gV('transfer') - gV('cash') - gV('expense') - gV('other_val');
+        
+        // ĐẢO PHÉP TÍNH: (Tiền thực tế + Chi) - Doanh thu
+        // Nếu kết quả > 0 tức là Tiền thực tế đang thừa so với Doanh thu -> Dương tiền
+        const thucTe = gV('shopee') + gV('grab') + gV('be') + gV('transfer') + gV('cash') + gV('expense') + gV('other_val');
+        const diff = thucTe - gV('total_rev');
+        
         document.getElementById('diff-val').innerText = new Intl.NumberFormat().format(diff.toFixed(0));
         const lb = document.getElementById('status-label');
-        if (diff > 0) { lb.innerText = "ÂM TIỀN (HỤT)"; lb.className = "status-small txt-do"; }
-        else if (diff < 0) { lb.innerText = "DƯƠNG TIỀN (DƯ)"; lb.className = "status-small txt-xanh"; }
-        else { lb.innerText = "BẰNG"; lb.className = "status-small"; }
+        
+        if (diff > 0) { 
+            lb.innerText = "TRẠNG THÁI: DƯƠNG TIỀN (DƯ)"; 
+            lb.className = "status-small txt-xanh"; 
+        } else if (diff < 0) { 
+            lb.innerText = "TRẠNG THÁI: ÂM TIỀN (HỤT)"; 
+            lb.className = "status-small txt-do"; 
+        } else { 
+            lb.innerText = "TRẠNG THÁI: BẰNG"; 
+            lb.className = "status-small"; 
+        }
     }
 
     async function send() {
@@ -183,14 +174,16 @@
             data.filter(x => x[0] && x[0].toString().startsWith(fMonth)).reverse().forEach(x => {
                 const dv = parseFloat(x[9])||0, rv = parseFloat(x[1])||0, ev = (parseFloat(x[7])||0)+(parseFloat(x[8])||0);
                 sR += rv; sE += ev; sD += dv;
-                h += `<tr><td style="text-align:left; color:#007bff; text-decoration:underline; font-weight:bold" onclick="viewBack('${x[0]}')">${x[0].split('-')[2]}</td><td class="${dv>0?'txt-do':'txt-xanh'}">${new Intl.NumberFormat().format(dv)}</td><td>${new Intl.NumberFormat().format(rv)}</td><td>${new Intl.NumberFormat().format(ev)}</td></tr>`;
+                let cClass = dv > 0 ? "txt-xanh" : (dv < 0 ? "txt-do" : "");
+                h += `<tr><td style="text-align:left; color:#007bff; text-decoration:underline; font-weight:bold" onclick="viewBack('${x[0]}')">${x[0].split('-')[2]}</td><td class="${cClass}">${new Intl.NumberFormat().format(dv)}</td><td>${new Intl.NumberFormat().format(rv)}</td><td>${new Intl.NumberFormat().format(ev)}</td></tr>`;
             });
             b.innerHTML = h || '<tr><td colspan="4">Trống</td></tr>';
             document.getElementById('sum-r').innerText = new Intl.NumberFormat().format(sR);
             document.getElementById('sum-e').innerText = new Intl.NumberFormat().format(sE);
             const sumD = document.getElementById('sum-d');
-            sumD.innerText = new Intl.NumberFormat().format(sD) + (sD > 0 ? " (Âm)" : (sD < 0 ? " (Dương)" : ""));
-            sumD.className = sD > 0 ? "txt-do" : (sD < 0 ? "txt-xanh" : "");
+            let statusMonth = sD > 0 ? " (Dương)" : (sD < 0 ? " (Âm)" : "");
+            sumD.innerText = new Intl.NumberFormat().format(sD) + statusMonth;
+            sumD.className = sD > 0 ? "txt-xanh" : (sD < 0 ? "txt-do" : "");
         } catch(e) { b.innerHTML = '<tr><td colspan="4">Lỗi!</td></tr>'; }
     }
 
