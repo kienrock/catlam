@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Hệ Thống Kiên K80 - Fix Lỗi Tính Toán</title>
+    <title>Hệ Thống Kiên K80 - Chuẩn Xác 100%</title>
     <style>
         body { font-family: -apple-system, sans-serif; margin: 0; background: #f4f6f8; color: #333; }
         .tabs { display: flex; background: white; border-bottom: 1px solid #ddd; position: sticky; top: 0; z-index: 100; }
@@ -31,7 +31,7 @@
         .s-card span { font-size: 9px; color: #666; font-weight: bold; display: block; margin-bottom: 4px; }
         .s-card b { font-size: 12px; display: block; color: #000; }
         table { width: 100%; border-collapse: collapse; background: white; font-size: 13px; border: 1px solid #eee; }
-        th, td { border-bottom: 1px solid #eee; padding: 10px 4px; text-align: right; }
+        th, td { border: 1px solid #eee; padding: 10px 4px; text-align: right; }
         th { background: #f8f9fa; font-weight: bold; font-size: 12px; }
         th:first-child, td:first-child { width: 65px; text-align: center; }
         .link-edit { color: #007bff; text-decoration: underline; font-weight: bold; cursor: pointer; display: block; font-size: 11px; }
@@ -65,7 +65,8 @@
         <div class="in-row"><span class="label-text">Be:</span><div class="input-wrapper"><input type="text" id="be" oninput="cal()" onfocus="toNum(this)" onblur="toFmt(this)" placeholder="(k)"></div></div>
     </div>
 
-    <div class="group"><div class="in-row"><span class="label-text">Chuyển Khoản:</span><div class="input-wrapper"><input type="text" id="transfer" oninput="cal()" onfocus="toNum(this)" onblur="toFmt(this)" placeholder="(k)"></div></div></div>
+    <div class="group"><div class="in-row"><span class="label-text">CK Bank:</span><div class="input-wrapper"><input type="text" id="transfer" oninput="cal()" onfocus="toNum(this)" onblur="toFmt(this)" placeholder="(k)"></div></div></div>
+    
     <div class="group">
         <div class="in-row">
             <span class="label-text">Tiền Mặt:</span>
@@ -75,9 +76,10 @@
             </div>
         </div>
     </div>
+
     <div class="group">
         <div class="in-row"><span class="label-text">Tổng chi:</span><div class="input-wrapper"><input type="text" id="expense" oninput="cal()" onfocus="toNum(this)" onblur="toFmt(this)" placeholder="(k)"></div></div>
-        <div class="in-row"><span class="label-text">Khác:</span><div class="input-wrapper"><input type="text" id="other_val" oninput="cal()" onfocus="toNum(this)" onblur="toFmt(this)" placeholder="(k)"></div></div>
+        <div class="in-row"><span class="label-text">Khoản Khác:</span><div class="input-wrapper"><input type="text" id="other_val" oninput="cal()" onfocus="toNum(this)" onblur="toFmt(this)" placeholder="(k)"></div></div>
     </div>
 
     <div class="diff-container">
@@ -95,7 +97,7 @@
         <div style="display:flex; justify-content:space-between; margin-bottom:10px"><b>💰 ĐẾM TIỀN (k)</b><span onclick="closeModal('cashModal')" style="cursor:pointer">✖</span></div>
         <div id="cashList"></div>
         <div style="border-top:1px solid #ddd; padding-top:8px; margin-top:8px">
-            <div class="in-row"><span>Tổng:</span><b id="cash-total-raw">0</b>k</div>
+            <div class="in-row"><span>Tổng đếm:</span><b id="cash-total-raw">0</b>k</div>
             <div class="in-row" style="color:red"><span>Để lại:</span><b>- 2,000</b>k</div>
             <div class="in-row" style="font-size:18px; color:#28a745"><span>MANG VỀ:</span><b id="cash-final">0</b>k</div>
         </div>
@@ -123,22 +125,22 @@
     const denominations = [{l:"500k",v:500},{l:"200k",v:200},{l:"100k",v:100},{l:"50k",v:50},{l:"20k",v:20},{l:"10k",v:10},{l:"5k",v:5},{l:"2k",v:2},{l:"1k",v:1}];
     let finalCashValue = 0;
 
-    // HÀM LẤY GIÁ TRỊ SỐ THUẦN TÚY ĐỂ TÍNH TOÁN (QUAN TRỌNG)
-    function cleanVal(str) {
+    // LÀM SẠCH SỐ ĐỂ TÍNH TOÁN
+    function n(str) {
         if (!str) return 0;
-        let num = str.toString().replace(/[^\d.-]/g, '');
-        return parseFloat(num) || 0;
+        let clean = str.toString().replace(/[^\d.-]/g, '');
+        return parseFloat(clean) || 0;
     }
 
+    // ĐỊNH DẠNG KHI RỜI Ô
     function toFmt(el) {
-        let val = cleanVal(el.value);
-        if (el.value !== "") {
-            el.value = fmt.format(val) + " k";
-        }
+        let val = n(el.value);
+        if (el.value !== "") el.value = fmt.format(val) + " k";
     }
 
+    // CHUYỂN VỀ SỐ KHI BẤM VÀO Ô
     function toNum(el) {
-        let val = cleanVal(el.value);
+        let val = n(el.value);
         el.value = val === 0 ? "" : val;
     }
 
@@ -171,15 +173,18 @@
     function openCashCounter() { document.getElementById('cashModal').style.display = 'flex'; }
     function closeModal(id) { document.getElementById(id).style.display = 'none'; }
 
+    // CÔNG THỨC CHUẨN: (Thực tế - Doanh thu)
     function cal() {
-        const totalThucTe = cleanVal(document.getElementById('shopee').value) + 
-                            cleanVal(document.getElementById('grab').value) + 
-                            cleanVal(document.getElementById('be').value) + 
-                            cleanVal(document.getElementById('transfer').value) + 
-                            cleanVal(document.getElementById('cash').value) + 
-                            cleanVal(document.getElementById('expense').value) + 
-                            cleanVal(document.getElementById('other_val').value);
-        const diff = totalThucTe - cleanVal(document.getElementById('total_rev').value);
+        const rev = n(document.getElementById('total_rev').value);
+        const real = n(document.getElementById('shopee').value) + 
+                     n(document.getElementById('grab').value) + 
+                     n(document.getElementById('be').value) + 
+                     n(document.getElementById('transfer').value) + 
+                     n(document.getElementById('cash').value) + 
+                     n(document.getElementById('expense').value) + 
+                     n(document.getElementById('other_val').value);
+        
+        const diff = real - rev;
         document.getElementById('diff-val').innerText = fmt.format(diff.toFixed(0));
         const lb = document.getElementById('status-label');
         lb.innerText = diff > 0 ? "DƯƠNG TIỀN (+)" : (diff < 0 ? "ÂM TIỀN (-)" : "BẰNG");
@@ -190,15 +195,15 @@
         const b = document.getElementById('btnSave'); b.disabled = true;
         const p = { 
             date: document.getElementById('date').value, 
-            total_rev: cleanVal(document.getElementById('total_rev').value), 
-            shopee: cleanVal(document.getElementById('shopee').value), 
-            grab: cleanVal(document.getElementById('grab').value), 
-            be: cleanVal(document.getElementById('be').value), 
-            transfer: cleanVal(document.getElementById('transfer').value), 
-            cash: cleanVal(document.getElementById('cash').value), 
-            expense: cleanVal(document.getElementById('expense').value), 
-            other: cleanVal(document.getElementById('other_val').value), 
-            diff: cleanVal(document.getElementById('diff-val').innerText) 
+            total_rev: n(document.getElementById('total_rev').value), 
+            shopee: n(document.getElementById('shopee').value), 
+            grab: n(document.getElementById('grab').value), 
+            be: n(document.getElementById('be').value), 
+            transfer: n(document.getElementById('transfer').value), 
+            cash: n(document.getElementById('cash').value), 
+            expense: n(document.getElementById('expense').value), 
+            other: n(document.getElementById('other_val').value), 
+            diff: n(document.getElementById('diff-val').innerText) 
         };
         try { await fetch(SCRIPT_URL, { method: 'POST', body: JSON.stringify(p) }); alert("Đã lưu!"); location.reload(); } catch (e) { b.disabled = false; }
     }
@@ -226,9 +231,8 @@
                 const dv = parseFloat(x[9])||0, rv = parseFloat(x[1])||0, ev = (parseFloat(x[7])||0)+(parseFloat(x[8])||0);
                 sR += rv; sE += ev; sD += dv; c++;
                 let clr = dv > 0 ? 'txt-xanh' : (dv < 0 ? 'txt-do' : '');
-                let sgn = dv > 0 ? ' (+)' : (dv < 0 ? ' (-)' : '');
-                let thu = getThu(x[0]);
-                h += `<tr><td><span class="link-edit" onclick="viewBack('${x[0]}')">${x[0].split('-')[2]} (${thu})</span></td><td class="${clr}">${fmt.format(dv)}${sgn}</td><td>${fmt.format(rv)}</td><td>${fmt.format(ev)}</td></tr>`;
+                let sign = dv > 0 ? ' (+)' : (dv < 0 ? ' (-)' : '');
+                h += `<tr><td><span class="link-edit" onclick="viewBack('${x[0]}')">${x[0].split('-')[2]} (${getThu(x[0])})</span></td><td class="${clr}">${fmt.format(dv)}${sign}</td><td>${fmt.format(rv)}</td><td>${fmt.format(ev)}</td></tr>`;
             });
             b.innerHTML = h;
             document.getElementById('sum-r').innerText = fmt.format(sR);
@@ -246,7 +250,7 @@
         document.getElementById('date').value = r[0];
         const ids = ['total_rev', 'shopee', 'grab', 'be', 'transfer', 'cash', 'expense', 'other_val'];
         ids.forEach((id, idx) => {
-            let val = cleanVal(r[idx+1]);
+            let val = n(r[idx+1]);
             document.getElementById(id).value = fmt.format(val) + " k";
         });
         cal(); openTab('input', document.getElementById('tab-in'));
