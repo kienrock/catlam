@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Hệ Thống Kiên K80 - Popup Siêu Gọn</title>
+    <title>Hệ Thống Kiên K80 - Fix Tổng Hợp</title>
     <style>
         body { font-family: -apple-system, sans-serif; margin: 0; background: #f4f6f8; color: #333; }
         .header { background: #007bff; color: white; padding: 10px; text-align: center; font-weight: bold; }
@@ -18,7 +18,7 @@
         .label-text { font-size: 13px; font-weight: bold; color: #555; flex-shrink: 0; }
         .input-wrapper { display: flex; align-items: center; gap: 5px; flex: 1; justify-content: flex-end; }
         input { border: 1px solid #ddd; border-radius: 5px; padding: 8px; font-size: 16px; text-align: right; width: 65%; box-sizing: border-box; }
-        .icon-btn { cursor: pointer; font-size: 20px; padding: 2px; transition: 0.2s; }
+        .icon-btn { cursor: pointer; font-size: 20px; padding: 2px; }
         
         .btn-save { background: #28a745; color: white; width: 100%; padding: 14px; border: none; border-radius: 8px; font-size: 18px; font-weight: bold; margin-top: 10px; cursor: pointer; }
         .btn-print { background: #343a40; color: white; width: 100%; padding: 12px; border: none; border-radius: 8px; font-weight: bold; margin-top: 8px; cursor: pointer; }
@@ -27,24 +27,27 @@
         #diff-val { font-size: 28px; font-weight: 900; display: block; line-height: 1; margin-bottom: 4px; }
         .txt-do { color: #ff4d4d; } .txt-xanh { color: #2ecc71; }
 
-        /* MODAL SIÊU GỌN */
+        /* MODAL KIỂM TIỀN */
         .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); z-index: 1000; justify-content: center; align-items: center; }
         .modal-box { background: white; width: 95%; max-width: 380px; border-radius: 12px; padding: 12px; max-height: 90vh; overflow-y: auto; }
         .modal-header { display: flex; justify-content: space-between; font-weight: bold; border-bottom: 1px solid #ddd; padding-bottom: 8px; margin-bottom: 8px; font-size: 14px; }
-        
-        /* Chỉnh dòng tiền mặt sát nhau */
         .cash-row { display: flex; align-items: center; justify-content: space-between; margin-bottom: 2px; background: #f9f9f9; padding: 4px 8px; border-radius: 4px; }
-        .cash-row span { font-size: 12px; }
         .cash-input { width: 60px !important; padding: 4px !important; font-size: 14px !important; height: 28px !important; }
         
+        /* MÁY TÍNH */
         #calc-display { width: 100%; padding: 10px; font-size: 22px; text-align: right; margin-bottom: 10px; border: 1px solid #ddd; border-radius: 5px; background: #eee; box-sizing: border-box; }
         .calc-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 4px; }
         .calc-btn { padding: 12px; font-size: 16px; font-weight: bold; cursor: pointer; border-radius: 5px; border: 1px solid #ddd; background: white; }
 
+        /* TỔNG HỢP */
         .summary-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 4px; margin-bottom: 10px; }
         .s-card { background: white; padding: 6px 2px; border-radius: 6px; text-align: center; border-top: 3px solid #007bff; box-shadow: 0 1px 2px rgba(0,0,0,0.1); }
         .s-card span { font-size: 9px; color: #666; font-weight: bold; display: block; height: 22px; line-height: 11px; }
-        .s-card b { font-size: 11px; display: block; }
+        .s-card b { font-size: 11px; display: block; white-space: nowrap; }
+
+        table { width: 100%; border-collapse: collapse; background: white; font-size: 12px; margin-top: 5px; }
+        th, td { border-bottom: 1px solid #eee; padding: 10px 4px; text-align: right; }
+        th { background: #f8f9fa; color: #666; }
 
         @media print {
             header, .header, .tabs, .btn-save, .btn-print, #report, button, .icon-btn, .tab { display: none !important; }
@@ -193,7 +196,8 @@
 
     function cal() {
         const g = (id) => parseFloat(document.getElementById(id).value) || 0;
-        const diff = (g('apps') + g('transfer') + g('cash') + g('expense') + g('other_val')) - g('total_rev');
+        const totalThucTe = g('apps') + g('transfer') + g('cash') + g('expense') + g('other_val');
+        const diff = totalThucTe - g('total_rev');
         document.getElementById('diff-val').innerText = new Intl.NumberFormat().format(diff.toFixed(0));
         const lb = document.getElementById('status-label');
         if (diff > 0) { lb.innerText = "DƯƠNG TIỀN (DƯ)"; lb.className = "txt-xanh"; }
@@ -210,7 +214,8 @@
     function openTab(n, el) {
         document.querySelectorAll('.content').forEach(c => c.classList.remove('active'));
         document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
-        document.getElementById(n).classList.add('active'); el.classList.add('active');
+        document.getElementById(n).classList.add('active'); 
+        el.classList.add('active');
         if(n === 'report') load();
     }
 
@@ -218,20 +223,35 @@
         const f = document.getElementById('m-filter').value;
         const b = document.getElementById('res'); b.innerHTML = '<tr><td colspan="4">Tải...</td></tr>';
         try {
-            const res = await fetch(SCRIPT_URL); const data = await res.json();
+            const res = await fetch(SCRIPT_URL); const data = await res.json(); window.rawD = data;
             let h = '', sR = 0, sE = 0, sD = 0, c = 0;
             data.filter(x => x[0] && x[0].toString().startsWith(f)).reverse().forEach(x => {
                 const dv = parseFloat(x[9])||0, rv = parseFloat(x[1])||0, ev = (parseFloat(x[7])||0)+(parseFloat(x[8])||0);
                 sR += rv; sE += ev; sD += dv; c++;
-                h += `<tr><td style="text-align:left; color:#007bff; font-weight:bold">${x[0].split('-')[2]}</td><td class="${dv>0?'txt-xanh':'txt-do'}">${new Intl.NumberFormat().format(dv)}</td><td>${new Intl.NumberFormat().format(rv)}</td><td>${new Intl.NumberFormat().format(ev)}</td></tr>`;
+                h += `<tr><td style="text-align:left; color:#007bff; text-decoration:underline; font-weight:bold" onclick="viewBack('${x[0]}')">${x[0].split('-')[2]}</td><td class="${dv>0?'txt-xanh':'txt-do'}">${new Intl.NumberFormat().format(dv)}</td><td>${new Intl.NumberFormat().format(rv)}</td><td>${new Intl.NumberFormat().format(ev)}</td></tr>`;
             });
             b.innerHTML = h || '<tr><td colspan="4">Trống</td></tr>';
             document.getElementById('sum-r').innerText = new Intl.NumberFormat().format(sR);
             document.getElementById('sum-e').innerText = new Intl.NumberFormat().format(sE);
-            document.getElementById('sum-d').innerText = new Intl.NumberFormat().format(sD);
+            document.getElementById('sum-d').innerText = new Intl.NumberFormat().format(sD) + (sD > 0 ? " (+)" : (sD < 0 ? " (-)" : ""));
             document.getElementById('sum-avg').innerText = new Intl.NumberFormat().format(c > 0 ? (sR/c).toFixed(0) : 0);
-        } catch(e) { b.innerHTML = '<tr><td colspan="4">Lỗi!</td></tr>'; }
+        } catch(e) { b.innerHTML = '<tr><td colspan="4">Lỗi kết nối!</td></tr>'; }
     }
+
+    function viewBack(dateStr) {
+        const r = window.rawD.find(i => i[0].toString() === dateStr);
+        if(!r) return;
+        document.getElementById('date').value = r[0];
+        document.getElementById('total_rev').value = r[1];
+        document.getElementById('apps').value = r[2]; 
+        document.getElementById('transfer').value = r[3]; 
+        document.getElementById('cash').value = r[4];
+        document.getElementById('expense').value = r[5]; 
+        document.getElementById('other_val').value = r[6];
+        cal(); 
+        openTab('input', document.getElementById('tab-in'));
+    }
+
     window.onload = init;
 </script>
 </body>
