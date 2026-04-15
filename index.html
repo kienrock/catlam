@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Hệ Thống Kiên K80 - Chuẩn Mobile</title>
+    <title>Hệ Thống Kiên K80 - Bản Hoàn Thiện</title>
     <style>
         body { font-family: -apple-system, sans-serif; margin: 0; background: #f4f6f8; color: #333; }
         .tabs { display: flex; background: white; border-bottom: 1px solid #ddd; position: sticky; top: 0; z-index: 100; }
@@ -12,44 +12,20 @@
         .content { display: none; padding: 10px; max-width: 600px; margin: auto; }
         .content.active { display: block; }
 
-        /* FIX Ô NHẬP LIỆU BẰNG NHAU */
-        .group { background: white; padding: 10px; border-radius: 8px; margin-bottom: 8px; box-shadow: 0 1px 2px rgba(0,0,0,0.1); }
-        .in-row { display: flex; gap: 10px; margin-bottom: 4px; align-items: center; }
-        
-        .label-text { 
-            width: 100px; /* CỐ ĐỊNH ĐỘ RỘNG TIÊU ĐỀ */
-            font-size: 13px; 
-            font-weight: bold; 
-            color: #555; 
-            flex-shrink: 0; /* KHÔNG CHO CO LẠI */
-        }
-        
-        .input-wrapper { 
-            flex: 1; /* CHIẾM TOÀN BỘ PHẦN CÒN LẠI */
-            display: flex; 
-            align-items: center; 
-            gap: 5px; 
-        }
-        
-        input { 
-            flex: 1; /* ÉP Ô NHẬP LIỆU DÀI BẰNG NHAU */
-            border: 1px solid #ddd; 
-            border-radius: 5px; 
-            padding: 10px; 
-            font-size: 16px; 
-            text-align: right; 
-            box-sizing: border-box;
-            width: 100%;
-        }
-
+        .group { background: white; padding: 8px; border-radius: 8px; margin-bottom: 8px; box-shadow: 0 1px 2px rgba(0,0,0,0.1); }
+        .in-row { display: flex; gap: 8px; margin-bottom: 4px; align-items: center; justify-content: space-between; }
+        .label-text { font-size: 13px; font-weight: bold; color: #555; }
+        .input-wrapper { display: flex; align-items: center; gap: 5px; flex: 1; justify-content: flex-end; }
+        input { border: 1px solid #ddd; border-radius: 5px; padding: 8px; font-size: 16px; text-align: right; width: 65%; box-sizing: border-box; }
         .icon-btn { cursor: pointer; font-size: 20px; padding: 2px; }
+        
         .btn-save { background: #28a745; color: white; width: 100%; padding: 14px; border: none; border-radius: 8px; font-size: 18px; font-weight: bold; margin-top: 10px; cursor: pointer; }
         .btn-print { background: #343a40; color: white; width: 100%; padding: 12px; border: none; border-radius: 8px; font-weight: bold; margin-top: 8px; cursor: pointer; }
+        
         .diff-container { background: #343a40; color: white; padding: 10px; border-radius: 10px; text-align: center; margin-top: 8px; }
         #diff-val { font-size: 28px; font-weight: 900; display: block; line-height: 1; margin-bottom: 4px; }
         .txt-do { color: #ff4d4d !important; } .txt-xanh { color: #2ecc71 !important; }
 
-        /* MODAL */
         .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); z-index: 1000; justify-content: center; align-items: center; }
         .modal-box { background: white; width: 95%; max-width: 380px; border-radius: 12px; padding: 12px; }
         .cash-row { display: flex; align-items: center; justify-content: space-between; margin-bottom: 2px; background: #f9f9f9; padding: 4px 8px; border-radius: 4px; }
@@ -59,6 +35,7 @@
         .s-card { background: white; padding: 10px 2px; border-radius: 6px; text-align: center; border-top: 4px solid #007bff; box-shadow: 0 1px 3px rgba(0,0,0,0.1); }
         .s-card span { font-size: 10px; color: #666; font-weight: bold; display: block; margin-bottom: 4px; }
         .s-card b { font-size: 12px; display: block; color: #000; }
+
         table { width: 100%; border-collapse: collapse; background: white; font-size: 13px; border: 1px solid #eee; }
         th, td { border: 1px solid #eee; padding: 10px 4px; text-align: right; }
         th { background: #f8f9fa; font-weight: bold; font-size: 12px; }
@@ -87,30 +64,25 @@
 <div id="input" class="content active">
     <div class="group"><div class="in-row"><span class="label-text">Ngày:</span><div class="input-wrapper"><input type="date" id="date"></div></div></div>
     <div class="group"><div class="in-row"><span class="label-text">Tổng DT:</span><div class="input-wrapper"><input type="number" id="total_rev" oninput="cal()" placeholder="0"></div></div></div>
-    
     <div class="group">
         <div class="in-row"><span class="label-text">Shopee:</span><div class="input-wrapper"><input type="number" id="shopee" oninput="cal()" placeholder="0"></div></div>
         <div class="in-row"><span class="label-text">Grab:</span><div class="input-wrapper"><input type="number" id="grab" oninput="cal()" placeholder="0"></div></div>
         <div class="in-row"><span class="label-text">Be:</span><div class="input-wrapper"><input type="number" id="be" oninput="cal()" placeholder="0"></div></div>
     </div>
-
-    <div class="group"><div class="in-row"><span class="label-text">Chuyển Khoản:</span><div class="input-wrapper"><input type="number" id="transfer" oninput="cal()" placeholder="0"></div></div></div>
-    
     <div class="group">
+        <div class="in-row"><span class="label-text">CK:</span><div class="input-wrapper"><input type="number" id="transfer" oninput="cal()" placeholder="0"></div></div>
         <div class="in-row">
-            <span class="label-text">Tiền Mặt:</span>
+            <span class="label-text">TM:</span>
             <div class="input-wrapper">
                 <input type="number" id="cash" oninput="cal()" placeholder="0">
                 <span class="icon-btn" onclick="openCashCounter()">💰</span>
             </div>
         </div>
     </div>
-
     <div class="group">
         <div class="in-row"><span class="label-text">Tổng chi:</span><div class="input-wrapper"><input type="number" id="expense" oninput="cal()" placeholder="0"></div></div>
         <div class="in-row"><span class="label-text">Khác:</span><div class="input-wrapper"><input type="number" id="other_val" oninput="cal()" placeholder="0"></div></div>
     </div>
-
     <div class="diff-container">
         <b id="diff-val">0</b>
         <span id="status-label" style="font-weight:bold">--</span>
@@ -124,9 +96,9 @@
         <div style="display:flex; justify-content:space-between; margin-bottom:10px"><b>💰 ĐẾM TIỀN (k)</b><span onclick="closeModal('cashModal')" style="cursor:pointer">✖</span></div>
         <div id="cashList"></div>
         <div style="border-top:1px solid #ddd; padding-top:8px; margin-top:8px">
-            <div class="in-row" style="font-size:13px"><span class="label-text" style="width:auto">Tổng:</span><b id="cash-total-raw">0</b>k</div>
-            <div class="in-row" style="color:red; font-size:13px"><span class="label-text" style="width:auto">Lại:</span><b>- 2,000</b>k</div>
-            <div class="in-row" style="font-size:18px; color:#28a745"><span class="label-text" style="width:auto">MANG VỀ:</span><b id="cash-final">0</b>k</div>
+            <div class="in-row"><span>Tổng:</span><b id="cash-total-raw">0</b>k</div>
+            <div class="in-row" style="color:red"><span>Lại:</span><b>- 2,000</b>k</div>
+            <div class="in-row" style="font-size:18px; color:#28a745"><span>MANG VỀ:</span><b id="cash-final">0</b>k</div>
         </div>
         <button class="btn-save" onclick="confirmCash()">XÁC NHẬN</button>
     </div>
@@ -208,16 +180,22 @@
             data.filter(x => x[0] && x[0].toString().startsWith(f)).reverse().forEach(x => {
                 const dv = parseFloat(x[9])||0, rv = parseFloat(x[1])||0, ev = (parseFloat(x[7])||0)+(parseFloat(x[8])||0);
                 sR += rv; sE += ev; sD += dv; c++;
+                // LOGIC MÀU SẮC VÀ DẤU (+)(-) CHO BẢNG DÒNG
                 let colorClass = dv > 0 ? 'txt-xanh' : (dv < 0 ? 'txt-do' : '');
                 let sign = dv > 0 ? ' (+)' : (dv < 0 ? ' (-)' : '');
+                
                 h += `<tr><td><span class="link-edit" onclick="viewBack('${x[0]}')">${x[0].split('-')[2]}</span></td><td class="${colorClass}">${fmt.format(dv)}${sign}</td><td>${fmt.format(rv)}</td><td>${fmt.format(ev)}</td></tr>`;
             });
             b.innerHTML = h;
+            
+            // TỔNG HỢP TRÊN ĐẦU
             document.getElementById('sum-r').innerText = fmt.format(sR);
             document.getElementById('sum-e').innerText = fmt.format(sE);
+            
             const sumD = document.getElementById('sum-d');
             sumD.innerText = fmt.format(sD) + (sD > 0 ? " (+)" : (sD < 0 ? " (-)" : ""));
             sumD.className = sD > 0 ? "txt-xanh" : (sD < 0 ? "txt-do" : "");
+            
             document.getElementById('sum-avg').innerText = fmt.format(c > 0 ? (sR/c).toFixed(0) : 0);
         } catch(e) { b.innerHTML = 'Lỗi!'; }
     }
