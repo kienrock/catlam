@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Hệ Thống Kiên K80 - Ép Text Chống Nhảy Ngày</title>
+    <title>Hệ Thống Kiên K80 - Thống Kê Nâng Cao</title>
     <style>
         body { font-family: -apple-system, sans-serif; margin: 0; background: #f4f6f8; color: #333; }
         .tabs { display: flex; background: white; border-bottom: 1px solid #ddd; position: sticky; top: 0; z-index: 100; }
@@ -12,13 +12,13 @@
         .content { display: none; padding: 10px; max-width: 600px; margin: auto; }
         .content.active { display: block; }
         
-        /* Giao diện nhập liệu */
+        /* Nhập liệu */
         .group { background: white; padding: 10px; border-radius: 8px; margin-bottom: 8px; box-shadow: 0 1px 2px rgba(0,0,0,0.1); }
         .in-row { display: flex; gap: 8px; margin-bottom: 6px; align-items: center; }
-        .label-text { width: 90px; font-size: 15px; font-weight: bold; color: #555; flex-shrink: 0; }
+        .label-text { width: 95px; font-size: 15px; font-weight: bold; color: #555; flex-shrink: 0; }
         input { border: 1px solid #ddd; border-radius: 5px; padding: 12px; font-size: 18px; text-align: right; width: 100%; box-sizing: border-box; }
 
-        /* Bảng tổng hợp tháng */
+        /* Tổng hợp tháng */
         .summary-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 4px; margin-bottom: 8px; }
         .s-card { background: white; padding: 10px 1px; border-radius: 6px; text-align: center; border-top: 4px solid #007bff; box-shadow: 0 1px 3px rgba(0,0,0,0.1); min-height: 55px; display: flex; flex-direction: column; justify-content: center; }
         .s-card span { font-size: 10px; color: #666; font-weight: bold; display: block; margin-bottom: 4px; text-transform: uppercase; }
@@ -27,11 +27,11 @@
         
         .plus { color: #2ecc71 !important; font-weight: bold; }
         .minus { color: #ff4d4d !important; font-weight: bold; }
-        #sum-d { font-size: 22px !important; font-weight: 900; }
+        #sum-d, #sum-avg { font-size: 18px !important; font-weight: 900; }
 
         table { width: 100%; border-collapse: collapse; background: white; font-size: 14px; margin-top: 5px; }
         th, td { border: 1px solid #eee; padding: 12px 4px; text-align: right; }
-        th { background: #f8f9fa; font-weight: bold; text-align: center; }
+        th { background: #f8f9fa; font-weight: bold; text-align: center; font-size: 13px; }
         .link-edit { color: #007bff; text-decoration: underline; font-weight: bold; cursor: pointer; }
 
         .btn-save { background: #28a745; color: white; width: 100%; padding: 18px; border: none; border-radius: 8px; font-size: 20px; font-weight: bold; cursor: pointer; margin-top: 10px; }
@@ -40,6 +40,7 @@
         .diff-container { background: #343a40; color: white; padding: 12px; border-radius: 10px; text-align: center; margin: 10px 0; }
         #diff-val { font-size: 32px; font-weight: 900; }
 
+        /* In K80 */
         @media print {
             header, .tabs, .btn-save, .btn-print, #report, button, .tab { display: none !important; }
             body { background: white !important; color: #000 !important; filter: brightness(0) contrast(1000%) !important; }
@@ -47,7 +48,7 @@
             #input { display: block !important; width: 100% !important; padding: 0; margin: 0; }
             .group { box-shadow: none !important; border-bottom: 2px solid #000 !important; padding: 1px 0 !important; margin: 0 !important; border-radius: 0 !important; line-height: 1.0 !important; }
             .in-row { display: flex !important; line-height: 1.0 !important; padding: 1px 0 !important; }
-            .label-text { font-size: 14px !important; font-weight: 900 !important; width: 100px !important; }
+            .label-text { font-size: 14px !important; font-weight: 900 !important; width: 110px !important; }
             input { border: none !important; font-weight: 900 !important; font-size: 18px !important; text-align: right !important; background: transparent !important; flex: 1 !important; }
             .diff-container { background: white !important; border: 3px solid #000 !important; padding: 5px 0 !important; }
             #input::before { content: "BIÊN LAI CHỐT TIỀN"; display: block; text-align: center; font-weight: 900; font-size: 20px; border-bottom: 3px solid #000; margin-bottom: 5px; }
@@ -81,7 +82,7 @@
     
     <div class="group" id="other_group">
         <div class="in-row" style="justify-content: space-between;">
-            <span class="label-text">Khác:</span>
+            <span class="label-text">Khoản Khác:</span>
             <button onclick="addOtherRow()" style="background:#007bff; color:white; border:none; border-radius:50%; width:30px; height:30px; font-size:20px">+</button>
         </div>
         <div id="other_list">
@@ -113,9 +114,11 @@
         </div>
         <div class="s-card"><span>TM</span><b id="sum-tm">0</b></div>
     </div>
-    <div class="summary-grid" style="grid-template-columns: 1fr 1fr;">
-        <div class="s-card" style="border-top-color: #dc3545;"><span>TỔNG CHI</span><b id="sum-e">0</b></div>
-        <div class="s-card" style="border-top-color: #ffc107;"><span>CHÊNH</span><b id="sum-d">0</b></div>
+    
+    <div class="summary-grid">
+        <div class="s-card" style="border-top-color: #dc3545; grid-column: span 1;"><span>CHI</span><b id="sum-e">0</b></div>
+        <div class="s-card" style="border-top-color: #ffc107; grid-column: span 1;"><span>CHÊNH</span><b id="sum-d">0</b></div>
+        <div class="s-card" style="border-top-color: #17a2b8; grid-column: span 2;"><span>DT TRUNG BÌNH / NGÀY</span><b id="sum-avg">0</b></div>
     </div>
 
     <table>
@@ -154,10 +157,8 @@
         });
         let ot = 0; document.querySelectorAll('.other-val').forEach(el => ot += parseFloat(el.value) || 0);
         
-        // GỬI DẠNG TEXT (YYYY-MM-DD) ĐỂ GOOGLE SHEET KHÔNG TỰ NHẢY GIỜ
-        const dateVal = document.getElementById('date').value;
-
-        const p = { date: "'" + dateVal, total_rev: g('total_rev'), shopee: g('shopee'), grab: g('grab'), be: g('be'), ck_tcb: g('ck_tcb'), ck_vcb: g('ck_vcb'), cash: g('cash'), expense: g('expense'), other: ot, note: notes.join(", "), diff: document.getElementById('diff-val').innerText.replace(/,/g,'') };
+        // Gửi dạng text 'YYYY-MM-DD để ép Google Sheets không nhảy ngày
+        const p = { date: "'" + document.getElementById('date').value, total_rev: g('total_rev'), shopee: g('shopee'), grab: g('grab'), be: g('be'), ck_tcb: g('ck_tcb'), ck_vcb: g('ck_vcb'), cash: g('cash'), expense: g('expense'), other: ot, note: notes.join(", "), diff: document.getElementById('diff-val').innerText.replace(/,/g,'') };
         try { await fetch(SCRIPT_URL, { method: 'POST', body: JSON.stringify(p) }); alert("Đã lưu!"); location.reload(); } catch (e) { b.disabled = false; b.innerText = "LƯU DỮ LIỆU"; }
     }
 
@@ -168,14 +169,11 @@
         if(n === 'report') load();
     }
 
-    // HIỂN THỊ DẠNG TEXT THUẦN TÚY (LẤY TỪ CHUỖI GỬI LÊN)
-    function formatTextDate(rawStr) {
+    function safeFormatDate(rawStr) {
         if(!rawStr) return "??";
-        let s = rawStr.toString().substring(0, 10); // Lấy 2026-04-17
+        let s = rawStr.toString().substring(0, 10);
         let p = s.split(/[-/]/);
         if(p.length < 3) return s;
-        
-        // Ép về đúng ngày địa phương bằng cách gán cứng số
         let dObj = new Date(parseInt(p[0]), parseInt(p[1]) - 1, parseInt(p[2]));
         let day = p[2];
         let thuArr = ['CN', 'T2', 'T3', 'T4', 'T5', 'T6', 'T7'];
@@ -187,13 +185,13 @@
         const b = document.getElementById('res'); b.innerHTML = '<tr><td colspan="4">Tải...</td></tr>';
         try {
             const res = await fetch(SCRIPT_URL); const data = await res.json(); window.rawD = data;
-            let h = '', sR = 0, sA = 0, sT = 0, sV = 0, sTM = 0, sE = 0, sD = 0;
+            let h = '', sR = 0, sA = 0, sT = 0, sV = 0, sTM = 0, sE = 0, sD = 0, count = 0;
             data.filter(x => x[0] && x[0].toString().startsWith(fMonth)).reverse().forEach(x => {
                 const rv = parseFloat(x[1])||0, tcb = parseFloat(x[5])||0, vcb = parseFloat(x[6])||0, tm = parseFloat(x[7])||0, chi = parseFloat(x[8])||0, kha = parseFloat(x[9])||0, lek = parseFloat(x[10])||0;
                 sR += rv; sA += (parseFloat(x[2])||0+parseFloat(x[3])||0+parseFloat(x[4])||0);
-                sT += tcb; sV += vcb; sTM += tm; sE += (chi+kha); sD += lek;
+                sT += tcb; sV += vcb; sTM += tm; sE += (chi+kha); sD += lek; count++;
                 let clrClass = lek > 0 ? 'plus' : (lek < 0 ? 'minus' : '');
-                h += `<tr><td class="link-edit" onclick="viewBack('${x[0]}')">${formatTextDate(x[0])}</td><td class="${clrClass}">${lek > 0 ? '+' : ''}${fmt.format(Math.round(lek))}</td><td>${fmt.format(Math.round(rv))}</td><td>${fmt.format(Math.round(chi+kha))}</td></tr>`;
+                h += `<tr><td class="link-edit" onclick="viewBack('${x[0]}')">${safeFormatDate(x[0])}</td><td class="${clrClass}">${lek > 0 ? '+' : ''}${fmt.format(Math.round(lek))}</td><td>${fmt.format(Math.round(rv))}</td><td>${fmt.format(Math.round(chi+kha))}</td></tr>`;
             });
             b.innerHTML = h || '<tr><td colspan="4">Trống</td></tr>';
             document.getElementById('sum-r').innerText = fmt.format(Math.round(sR));
@@ -203,17 +201,20 @@
             document.getElementById('sum-vcb').innerText = fmt.format(Math.round(sV));
             document.getElementById('sum-tm').innerText = fmt.format(Math.round(sTM));
             document.getElementById('sum-e').innerText = fmt.format(Math.round(sE));
+            
             const dEl = document.getElementById('sum-d');
             dEl.innerText = (sD > 0 ? "+" : "") + fmt.format(Math.round(sD));
             dEl.className = sD > 0 ? "plus" : (sD < 0 ? "minus" : "");
+
+            // TÍNH TRUNG BÌNH
+            document.getElementById('sum-avg').innerText = count > 0 ? fmt.format(Math.round(sR / count)) + " k" : "0 k";
+
         } catch(e) { b.innerHTML = '<tr><td colspan="4">Lỗi tải!</td></tr>'; }
     }
 
     function viewBack(rawStr) {
         const r = window.rawD.find(i => i[0].toString() === rawStr.toString()); if(!r) return;
-        // Chuyển ngược từ text về input date (định dạng YYYY-MM-DD)
-        let s = rawStr.toString().substring(0, 10).replace(/\//g, '-');
-        document.getElementById('date').value = s; 
+        document.getElementById('date').value = rawStr.toString().substring(0, 10).replace(/\//g, '-'); 
         document.getElementById('total_rev').value = r[1];
         document.getElementById('shopee').value = r[2]; document.getElementById('grab').value = r[3]; document.getElementById('be').value = r[4];
         document.getElementById('ck_tcb').value = r[5]; document.getElementById('ck_vcb').value = r[6]; document.getElementById('cash').value = r[7]; document.getElementById('expense').value = r[8];
