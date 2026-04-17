@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Hệ Thống Kiên K80 - Giao Diện Chuẩn</title>
+    <title>Hệ Thống Kiên K80 - In Chuẩn Nét</title>
     <style>
         body { font-family: -apple-system, sans-serif; margin: 0; background: #f4f6f8; color: #333; }
         .tabs { display: flex; background: white; border-bottom: 1px solid #ddd; position: sticky; top: 0; z-index: 100; }
@@ -18,7 +18,7 @@
         .label-text { width: 95px; font-size: 15px; font-weight: bold; color: #555; flex-shrink: 0; }
         input { border: 1px solid #ddd; border-radius: 5px; padding: 12px; font-size: 18px; text-align: right; width: 100%; box-sizing: border-box; }
 
-        /* TỔNG HỢP THÁNG 4 CỘT CÂN ĐỐI */
+        /* Tổng hợp */
         .summary-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 4px; margin-bottom: 4px; }
         .s-card { background: white; padding: 8px 1px; border-radius: 6px; text-align: center; border-top: 3px solid #007bff; box-shadow: 0 1px 2px rgba(0,0,0,0.1); min-height: 55px; display: flex; flex-direction: column; justify-content: center; }
         .s-card span { font-size: 9px; color: #666; font-weight: bold; display: block; margin-bottom: 3px; text-transform: uppercase; line-height: 1.1; }
@@ -27,11 +27,10 @@
         
         .plus { color: #2ecc71 !important; font-weight: bold; }
         .minus { color: #ff4d4d !important; font-weight: bold; }
-        .txt-avg { color: #17a2b8 !important; }
 
         table { width: 100%; border-collapse: collapse; background: white; font-size: 14px; margin-top: 10px; }
         th, td { border: 1px solid #eee; padding: 12px 4px; text-align: right; }
-        th { background: #f8f9fa; font-weight: bold; text-align: center; font-size: 13px; }
+        th { background: #f8f9fa; font-weight: bold; text-align: center; }
         .link-edit { color: #007bff; text-decoration: underline; font-weight: bold; cursor: pointer; }
 
         .btn-save { background: #28a745; color: white; width: 100%; padding: 18px; border: none; border-radius: 8px; font-size: 20px; font-weight: bold; cursor: pointer; margin-top: 10px; }
@@ -40,17 +39,82 @@
         .diff-container { background: #343a40; color: white; padding: 12px; border-radius: 10px; text-align: center; margin: 10px 0; }
         #diff-val { font-size: 32px; font-weight: 900; }
 
+        /* ===========================================
+           HỆ THỐNG IN CHUẨN K80 - CHỮ ĐEN GIẤY TRẮNG
+           =========================================== */
         @media print {
-            header, .tabs, .btn-save, .btn-print, #report, button, .tab { display: none !important; }
-            body { background: white !important; color: #000 !important; filter: brightness(0) contrast(1000%) !important; }
+            header, .tabs, .btn-save, .btn-print, #report, button, .tab, .icon-btn { display: none !important; }
+            
+            body { 
+                background: white !important; 
+                color: #000000 !important; 
+                margin: 0 !important; 
+                padding: 0 !important;
+                -webkit-print-color-adjust: exact;
+                print-color-adjust: exact;
+            }
+
             @page { size: 80mm auto; margin: 0; }
-            #input { display: block !important; width: 100% !important; padding: 0; margin: 0; }
-            .group { box-shadow: none !important; border-bottom: 2px solid #000 !important; padding: 1px 0 !important; margin: 0 !important; border-radius: 0 !important; line-height: 1.0 !important; }
-            .in-row { display: flex !important; line-height: 1.0 !important; padding: 1px 0 !important; }
-            .label-text { font-size: 14px !important; font-weight: 900 !important; width: 110px !important; }
-            input { border: none !important; font-weight: 900 !important; font-size: 18px !important; text-align: right !important; background: transparent !important; flex: 1 !important; }
-            .diff-container { background: white !important; border: 3px solid #000 !important; padding: 5px 0 !important; }
-            #input::before { content: "BIÊN LAI CHỐT TIỀN"; display: block; text-align: center; font-weight: 900; font-size: 20px; border-bottom: 3px solid #000; margin-bottom: 5px; }
+
+            #input { display: block !important; width: 100% !important; padding: 0 !important; margin: 0 !important; }
+
+            .group { 
+                box-shadow: none !important; 
+                border: none !important; 
+                border-bottom: 2px solid #000000 !important; /* Đường kẻ đen đậm */
+                padding: 2px 0 !important; 
+                margin: 0 !important; 
+                border-radius: 0 !important; 
+                line-height: 1.0 !important;
+            }
+
+            .in-row { 
+                padding: 1px 0 !important; 
+                margin: 0 !important; 
+                display: flex !important;
+            }
+
+            .label-text { 
+                font-size: 14px !important; 
+                color: #000000 !important; 
+                font-weight: 900 !important; /* Ép chữ đen đậm */
+                width: 100px !important;
+            }
+
+            input { 
+                border: none !important; 
+                font-weight: 900 !important; 
+                font-size: 18px !important; 
+                color: #000000 !important; 
+                text-align: right !important; 
+                padding: 0 !important; 
+                background: transparent !important;
+                flex: 1 !important;
+            }
+
+            .diff-container { 
+                background: white !important; 
+                border: 3px solid #000000 !important; 
+                padding: 5px 0 !important; 
+                margin: 5px 0 !important; 
+                color: #000000 !important;
+                border-radius: 0 !important;
+            }
+
+            #diff-val { font-size: 38px !important; font-weight: 900 !important; color: #000000 !important; }
+            #status-label { font-size: 16px !important; font-weight: 900 !important; color: #000000 !important; }
+
+            #input::before { 
+                content: "BIÊN LAI CHỐT TIỀN"; 
+                display: block; 
+                text-align: center; 
+                font-weight: 900; 
+                font-size: 20px; 
+                border-bottom: 3px solid #000000; 
+                margin-bottom: 5px; 
+                padding-bottom: 2px;
+                color: #000000 !important;
+            }
         }
     </style>
 </head>
@@ -82,7 +146,7 @@
     <div class="group" id="other_group">
         <div class="in-row" style="justify-content: space-between;">
             <span class="label-text">Khoản Khác:</span>
-            <button onclick="addOtherRow()" style="background:#007bff; color:white; border:none; border-radius:50%; width:30px; height:30px; font-size:20px">+</button>
+            <button onclick="addOtherRow()" class="icon-btn" style="background:#007bff; color:white; border:none; border-radius:50%; width:30px; height:30px; font-size:20px">+</button>
         </div>
         <div id="other_list">
             <div style="display:flex; gap:5px; margin-bottom:5px">
@@ -113,12 +177,12 @@
         </div>
         <div class="s-card"><span>TM</span><b id="sum-tm">0</b></div>
     </div>
-    
     <div class="summary-grid">
-        <div class="s-card" style="border-top-color: #17a2b8;"><span>DT TB / Ngày</span><b id="sum-avg" class="txt-avg">0</b></div>
+        <div class="s-card" style="border-top-color: #17a2b8;"><span>DT TB / Ngày</span><b id="sum-avg">0</b></div>
         <div class="s-card" style="border-top-color: #dc3545;"><span>Chi</span><b id="sum-e">0</b></div>
         <div class="s-card" style="border-top-color: #ffc107;"><span>Chênh</span><b id="sum-d">0</b></div>
-        <div class="s-card" style="border:none; background:transparent; box-shadow:none;"></div> </div>
+        <div class="s-card" style="border:none; background:transparent; box-shadow:none;"></div>
+    </div>
 
     <table>
         <thead><tr><th>Ngày</th><th>Chênh</th><th>DT</th><th>Chi</th></tr></thead>
