@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Hệ Thống Kiên K80 - Fix Giao Diện</title>
+    <title>Hệ Thống Kiên K80 - Đầy Đủ Tính Năng</title>
     <style>
         body { font-family: -apple-system, sans-serif; margin: 0; background: #f4f6f8; color: #333; }
         .tabs { display: flex; background: white; border-bottom: 1px solid #ddd; position: sticky; top: 0; z-index: 100; }
@@ -17,29 +17,42 @@
         .label-text { width: 90px; font-size: 15px; font-weight: bold; color: #555; flex-shrink: 0; }
         input { border: 1px solid #ddd; border-radius: 5px; padding: 12px; font-size: 18px; text-align: right; width: 100%; box-sizing: border-box; }
 
-        /* TỔNG HỢP THÁNG - ĐỀU NHAU & CHỮ TO */
+        /* TỔNG HỢP THÁNG */
         .summary-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 4px; margin-bottom: 8px; }
         .s-card { background: white; padding: 10px 1px; border-radius: 6px; text-align: center; border-top: 4px solid #007bff; box-shadow: 0 1px 3px rgba(0,0,0,0.1); min-height: 55px; display: flex; flex-direction: column; justify-content: center; }
         .s-card span { font-size: 10px; color: #666; font-weight: bold; display: block; margin-bottom: 4px; text-transform: uppercase; }
         .s-card b { font-size: 14px; display: block; color: #000; } 
-        
         .ck-row-flex { display: flex; justify-content: center; gap: 4px; font-size: 10px; color: #6f42c1; margin-top: 4px; border-top: 1px dashed #eee; padding-top: 4px; }
         
-        /* ĐỊNH DẠNG MÀU CHÊNH LỆCH */
         .plus { color: #2ecc71 !important; font-weight: bold; }
         .minus { color: #ff4d4d !important; font-weight: bold; }
-        #sum-d { font-size: 22px !important; font-weight: 900; } /* Số Chênh to hẳn lên */
+        #sum-d { font-size: 22px !important; font-weight: 900; }
 
         table { width: 100%; border-collapse: collapse; background: white; font-size: 14px; margin-top: 5px; }
         th, td { border: 1px solid #eee; padding: 12px 4px; text-align: right; }
-        th { background: #f8f9fa; color: #555; font-size: 13px; font-weight: bold; }
-        /* Cột ngày cho to thêm chút để không bị xuống dòng */
-        th:first-child, td:first-child { text-align: center; width: 75px; }
+        th { background: #f8f9fa; font-weight: bold; text-align: center; }
         .link-edit { color: #007bff; text-decoration: underline; font-weight: bold; cursor: pointer; }
 
+        /* NÚT BẤM */
         .btn-save { background: #28a745; color: white; width: 100%; padding: 18px; border: none; border-radius: 8px; font-size: 20px; font-weight: bold; cursor: pointer; margin-top: 10px; }
+        .btn-print { background: #343a40; color: white; width: 100%; padding: 15px; border: none; border-radius: 8px; font-size: 16px; font-weight: bold; margin-top: 8px; cursor: pointer; }
+        
         .diff-container { background: #343a40; color: white; padding: 12px; border-radius: 10px; text-align: center; margin: 10px 0; }
         #diff-val { font-size: 32px; font-weight: 900; }
+
+        /* CẤU HÌNH IN K80 */
+        @media print {
+            header, .tabs, .btn-save, .btn-print, #report, button { display: none !important; }
+            body { background: white !important; color: #000 !important; font-weight: 900 !important; margin: 0; padding: 0; }
+            @page { size: 80mm auto; margin: 0; }
+            #input { display: block !important; width: 100% !important; }
+            .group { box-shadow: none !important; border-bottom: 2px solid #000 !important; padding: 1px 0 !important; margin: 0 !important; border-radius: 0 !important; }
+            .in-row { padding: 1px 0 !important; margin: 0 !important; }
+            input { border: none !important; font-weight: 900 !important; font-size: 18px !important; color: #000 !important; text-align: right !important; padding: 0 !important; }
+            .diff-container { background: white !important; border: 3px solid #000 !important; padding: 5px 0 !important; margin-top: 5px !important; color: #000 !important; }
+            #diff-val { font-size: 38px !important; }
+            #input::before { content: "BIÊN LAI CHỐT TIỀN"; display: block; text-align: center; font-weight: 900; font-size: 20px; border-bottom: 3px solid #000; margin-bottom: 5px; padding-bottom: 2px; }
+        }
     </style>
 </head>
 <body>
@@ -52,15 +65,18 @@
 <div id="input" class="content active">
     <div class="group"><div class="in-row"><span class="label-text">Ngày:</span><input type="date" id="date"></div></div>
     <div class="group"><div class="in-row"><span class="label-text">Tổng DT:</span><input type="number" id="total_rev" oninput="cal()" placeholder="0"></div></div>
+    
     <div class="group">
         <div class="in-row"><span class="label-text">Shopee:</span><input type="number" id="shopee" oninput="cal()" placeholder="0"></div>
         <div class="in-row"><span class="label-text">Grab:</span><input type="number" id="grab" oninput="cal()" placeholder="0"></div>
         <div class="in-row"><span class="label-text">Be:</span><input type="number" id="be" oninput="cal()" placeholder="0"></div>
     </div>
+    
     <div class="group">
         <div class="in-row"><span class="label-text">CK (TCB):</span><input type="number" id="ck_tcb" oninput="cal()" placeholder="0"></div>
         <div class="in-row"><span class="label-text">CK (VCB):</span><input type="number" id="ck_vcb" oninput="cal()" placeholder="0"></div>
     </div>
+    
     <div class="group"><div class="in-row"><span class="label-text">Tiền mặt:</span><input type="number" id="cash" oninput="cal()" placeholder="0"></div></div>
     <div class="group"><div class="in-row"><span class="label-text">Tổng chi:</span><input type="number" id="expense" oninput="cal()" placeholder="0"></div></div>
     
@@ -81,7 +97,9 @@
         <b id="diff-val">0</b>
         <span id="status-label" style="font-weight:bold; font-size:15px; display:block">--</span>
     </div>
+
     <button id="btnSave" class="btn-save" onclick="send()">LƯU DỮ LIỆU</button>
+    <button class="btn-print" onclick="window.print()">🖨️ IN BIÊN LAI (K80)</button>
 </div>
 
 <div id="report" class="content">
@@ -97,7 +115,7 @@
         <div class="s-card"><span>TM</span><b id="sum-tm">0</b></div>
     </div>
     <div class="summary-grid" style="grid-template-columns: 1fr 1fr;">
-        <div class="s-card" style="border-top-color: #dc3545;"><span>TỔNG CHI</span><b id="sum-e">0</b></div>
+        <div class="s-card" style="border-top-color: #dc3545;"><span>TỔNG CHI</span><b id="sum-e" style="font-size:18px">0</b></div>
         <div class="s-card" style="border-top-color: #ffc107;"><span>CHÊNH</span><b id="sum-d">0</b></div>
     </div>
 
@@ -147,10 +165,9 @@
         if(n === 'report') load();
     }
 
-    // HÀM XỬ LÝ NGÀY THÁNG ĐỂ KHÔNG BỊ LỖI NHƯ TRONG HÌNH
     function formatDate(dateStr) {
         const d = new Date(dateStr);
-        if (isNaN(d.getTime())) return dateStr.split('T')[0].split('-').pop(); // Nếu lỗi thì lấy tạm số cuối
+        if (isNaN(d.getTime())) return dateStr.toString().split('T')[0].split('-').pop();
         const day = d.getDate().toString().padStart(2, '0');
         const thuArr = ['CN', 'T2', 'T3', 'T4', 'T5', 'T6', 'T7'];
         return `${day} (${thuArr[d.getDay()]})`;
@@ -166,10 +183,8 @@
                 const rv = parseFloat(x[1])||0, sho = parseFloat(x[2])||0, gra = parseFloat(x[3])||0, be = parseFloat(x[4])||0;
                 const tcb = parseFloat(x[5])||0, vcb = parseFloat(x[6])||0, tm = parseFloat(x[7])||0, chi = parseFloat(x[8])||0, kha = parseFloat(x[9])||0, lek = parseFloat(x[10])||0;
                 sR += rv; sA += (sho+gra+be); sT += tcb; sV += vcb; sTM += tm; sE += (chi+kha); sD += lek;
-                
                 let clrClass = lek > 0 ? 'plus' : (lek < 0 ? 'minus' : '');
                 let sgn = lek > 0 ? '+' : '';
-                
                 h += `<tr><td class="link-edit" onclick="viewBack('${x[0]}')">${formatDate(x[0])}</td><td class="${clrClass}">${sgn}${fmt.format(Math.round(lek))}</td><td>${fmt.format(Math.round(rv))}</td><td>${fmt.format(Math.round(chi+kha))}</td></tr>`;
             });
             b.innerHTML = h || '<tr><td colspan="4">Trống</td></tr>';
@@ -180,11 +195,9 @@
             document.getElementById('sum-vcb').innerText = fmt.format(Math.round(sV));
             document.getElementById('sum-tm').innerText = fmt.format(Math.round(sTM));
             document.getElementById('sum-e').innerText = fmt.format(Math.round(sE));
-            
             const dEl = document.getElementById('sum-d');
             dEl.innerText = (sD > 0 ? "+" : "") + fmt.format(Math.round(sD));
             dEl.className = sD > 0 ? "plus" : (sD < 0 ? "minus" : "");
-            
         } catch(e) { b.innerHTML = '<tr><td colspan="4">Lỗi tải!</td></tr>'; }
     }
 
