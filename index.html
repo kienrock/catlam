@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Hệ Thống Kiên K80 - Thống Kê Nâng Cao</title>
+    <title>Hệ Thống Kiên K80 - Giao Diện Chuẩn</title>
     <style>
         body { font-family: -apple-system, sans-serif; margin: 0; background: #f4f6f8; color: #333; }
         .tabs { display: flex; background: white; border-bottom: 1px solid #ddd; position: sticky; top: 0; z-index: 100; }
@@ -18,18 +18,18 @@
         .label-text { width: 95px; font-size: 15px; font-weight: bold; color: #555; flex-shrink: 0; }
         input { border: 1px solid #ddd; border-radius: 5px; padding: 12px; font-size: 18px; text-align: right; width: 100%; box-sizing: border-box; }
 
-        /* Tổng hợp tháng */
-        .summary-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 4px; margin-bottom: 8px; }
-        .s-card { background: white; padding: 10px 1px; border-radius: 6px; text-align: center; border-top: 4px solid #007bff; box-shadow: 0 1px 3px rgba(0,0,0,0.1); min-height: 55px; display: flex; flex-direction: column; justify-content: center; }
-        .s-card span { font-size: 10px; color: #666; font-weight: bold; display: block; margin-bottom: 4px; text-transform: uppercase; }
-        .s-card b { font-size: 14px; display: block; color: #000; } 
-        .ck-row-flex { display: flex; justify-content: center; gap: 4px; font-size: 10px; color: #6f42c1; margin-top: 4px; border-top: 1px dashed #eee; padding-top: 4px; }
+        /* TỔNG HỢP THÁNG 4 CỘT CÂN ĐỐI */
+        .summary-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 4px; margin-bottom: 4px; }
+        .s-card { background: white; padding: 8px 1px; border-radius: 6px; text-align: center; border-top: 3px solid #007bff; box-shadow: 0 1px 2px rgba(0,0,0,0.1); min-height: 55px; display: flex; flex-direction: column; justify-content: center; }
+        .s-card span { font-size: 9px; color: #666; font-weight: bold; display: block; margin-bottom: 3px; text-transform: uppercase; line-height: 1.1; }
+        .s-card b { font-size: 13px; display: block; color: #000; } 
+        .ck-row-flex { display: flex; justify-content: center; gap: 4px; font-size: 9px; color: #6f42c1; margin-top: 2px; border-top: 1px dashed #eee; padding-top: 2px; }
         
         .plus { color: #2ecc71 !important; font-weight: bold; }
         .minus { color: #ff4d4d !important; font-weight: bold; }
-        #sum-d, #sum-avg { font-size: 18px !important; font-weight: 900; }
+        .txt-avg { color: #17a2b8 !important; }
 
-        table { width: 100%; border-collapse: collapse; background: white; font-size: 14px; margin-top: 5px; }
+        table { width: 100%; border-collapse: collapse; background: white; font-size: 14px; margin-top: 10px; }
         th, td { border: 1px solid #eee; padding: 12px 4px; text-align: right; }
         th { background: #f8f9fa; font-weight: bold; text-align: center; font-size: 13px; }
         .link-edit { color: #007bff; text-decoration: underline; font-weight: bold; cursor: pointer; }
@@ -40,7 +40,6 @@
         .diff-container { background: #343a40; color: white; padding: 12px; border-radius: 10px; text-align: center; margin: 10px 0; }
         #diff-val { font-size: 32px; font-weight: 900; }
 
-        /* In K80 */
         @media print {
             header, .tabs, .btn-save, .btn-print, #report, button, .tab { display: none !important; }
             body { background: white !important; color: #000 !important; filter: brightness(0) contrast(1000%) !important; }
@@ -116,10 +115,10 @@
     </div>
     
     <div class="summary-grid">
-        <div class="s-card" style="border-top-color: #dc3545; grid-column: span 1;"><span>CHI</span><b id="sum-e">0</b></div>
-        <div class="s-card" style="border-top-color: #ffc107; grid-column: span 1;"><span>CHÊNH</span><b id="sum-d">0</b></div>
-        <div class="s-card" style="border-top-color: #17a2b8; grid-column: span 2;"><span>DT TRUNG BÌNH / NGÀY</span><b id="sum-avg">0</b></div>
-    </div>
+        <div class="s-card" style="border-top-color: #17a2b8;"><span>DT TB / Ngày</span><b id="sum-avg" class="txt-avg">0</b></div>
+        <div class="s-card" style="border-top-color: #dc3545;"><span>Chi</span><b id="sum-e">0</b></div>
+        <div class="s-card" style="border-top-color: #ffc107;"><span>Chênh</span><b id="sum-d">0</b></div>
+        <div class="s-card" style="border:none; background:transparent; box-shadow:none;"></div> </div>
 
     <table>
         <thead><tr><th>Ngày</th><th>Chênh</th><th>DT</th><th>Chi</th></tr></thead>
@@ -156,8 +155,6 @@
             if(v) notes.push(`${n}(${v}k)`);
         });
         let ot = 0; document.querySelectorAll('.other-val').forEach(el => ot += parseFloat(el.value) || 0);
-        
-        // Gửi dạng text 'YYYY-MM-DD để ép Google Sheets không nhảy ngày
         const p = { date: "'" + document.getElementById('date').value, total_rev: g('total_rev'), shopee: g('shopee'), grab: g('grab'), be: g('be'), ck_tcb: g('ck_tcb'), ck_vcb: g('ck_vcb'), cash: g('cash'), expense: g('expense'), other: ot, note: notes.join(", "), diff: document.getElementById('diff-val').innerText.replace(/,/g,'') };
         try { await fetch(SCRIPT_URL, { method: 'POST', body: JSON.stringify(p) }); alert("Đã lưu!"); location.reload(); } catch (e) { b.disabled = false; b.innerText = "LƯU DỮ LIỆU"; }
     }
@@ -201,14 +198,10 @@
             document.getElementById('sum-vcb').innerText = fmt.format(Math.round(sV));
             document.getElementById('sum-tm').innerText = fmt.format(Math.round(sTM));
             document.getElementById('sum-e').innerText = fmt.format(Math.round(sE));
-            
             const dEl = document.getElementById('sum-d');
             dEl.innerText = (sD > 0 ? "+" : "") + fmt.format(Math.round(sD));
             dEl.className = sD > 0 ? "plus" : (sD < 0 ? "minus" : "");
-
-            // TÍNH TRUNG BÌNH
-            document.getElementById('sum-avg').innerText = count > 0 ? fmt.format(Math.round(sR / count)) + " k" : "0 k";
-
+            document.getElementById('sum-avg').innerText = count > 0 ? fmt.format(Math.round(sR / count)) : "0";
         } catch(e) { b.innerHTML = '<tr><td colspan="4">Lỗi tải!</td></tr>'; }
     }
 
