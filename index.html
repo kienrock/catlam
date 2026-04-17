@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Hệ Thống Kiên K80 - Tổng Hợp Màu Sắc</title>
+    <title>Hệ Thống Kiên K80 - Fix Giao Diện</title>
     <style>
         body { font-family: -apple-system, sans-serif; margin: 0; background: #f4f6f8; color: #333; }
         .tabs { display: flex; background: white; border-bottom: 1px solid #ddd; position: sticky; top: 0; z-index: 100; }
@@ -17,22 +17,24 @@
         .label-text { width: 90px; font-size: 15px; font-weight: bold; color: #555; flex-shrink: 0; }
         input { border: 1px solid #ddd; border-radius: 5px; padding: 12px; font-size: 18px; text-align: right; width: 100%; box-sizing: border-box; }
 
-        /* TỔNG HỢP THÁNG - CHỮ TO */
-        .summary-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px; margin-bottom: 10px; }
-        .s-card { background: white; padding: 10px 2px; border-radius: 8px; text-align: center; border-top: 4px solid #007bff; box-shadow: 0 1px 3px rgba(0,0,0,0.1); }
-        .s-card span { font-size: 11px; color: #666; font-weight: bold; display: block; margin-bottom: 4px; }
-        .s-card b { font-size: 15px; display: block; } 
+        /* TỔNG HỢP THÁNG - ĐỀU NHAU & CHỮ TO */
+        .summary-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 4px; margin-bottom: 8px; }
+        .s-card { background: white; padding: 10px 1px; border-radius: 6px; text-align: center; border-top: 4px solid #007bff; box-shadow: 0 1px 3px rgba(0,0,0,0.1); min-height: 55px; display: flex; flex-direction: column; justify-content: center; }
+        .s-card span { font-size: 10px; color: #666; font-weight: bold; display: block; margin-bottom: 4px; text-transform: uppercase; }
+        .s-card b { font-size: 14px; display: block; color: #000; } 
         
-        .ck-row-flex { display: flex; justify-content: center; gap: 6px; font-size: 11px; color: #6f42c1; margin-top: 4px; border-top: 1px dashed #eee; padding-top: 4px; }
+        .ck-row-flex { display: flex; justify-content: center; gap: 4px; font-size: 10px; color: #6f42c1; margin-top: 4px; border-top: 1px dashed #eee; padding-top: 4px; }
         
         /* ĐỊNH DẠNG MÀU CHÊNH LỆCH */
         .plus { color: #2ecc71 !important; font-weight: bold; }
         .minus { color: #ff4d4d !important; font-weight: bold; }
-        #sum-d { font-size: 19px !important; font-weight: 900; }
+        #sum-d { font-size: 22px !important; font-weight: 900; } /* Số Chênh to hẳn lên */
 
-        table { width: 100%; border-collapse: collapse; background: white; font-size: 14px; }
-        th, td { border: 1px solid #eee; padding: 12px 6px; text-align: right; }
-        th { background: #f8f9fa; color: #555; font-size: 13px; }
+        table { width: 100%; border-collapse: collapse; background: white; font-size: 14px; margin-top: 5px; }
+        th, td { border: 1px solid #eee; padding: 12px 4px; text-align: right; }
+        th { background: #f8f9fa; color: #555; font-size: 13px; font-weight: bold; }
+        /* Cột ngày cho to thêm chút để không bị xuống dòng */
+        th:first-child, td:first-child { text-align: center; width: 75px; }
         .link-edit { color: #007bff; text-decoration: underline; font-weight: bold; cursor: pointer; }
 
         .btn-save { background: #28a745; color: white; width: 100%; padding: 18px; border: none; border-radius: 8px; font-size: 20px; font-weight: bold; cursor: pointer; margin-top: 10px; }
@@ -83,16 +85,19 @@
 </div>
 
 <div id="report" class="content">
-    <div style="text-align:center; margin-bottom:15px"><input type="month" id="m-filter" onchange="load()" style="padding:10px; font-size:16px; border:1px solid #ddd"></div>
+    <div style="text-align:center; margin-bottom:12px"><input type="month" id="m-filter" onchange="load()" style="padding:10px; font-size:16px; border:1px solid #ddd; border-radius:5px;"></div>
     
     <div class="summary-grid">
         <div class="s-card"><span>Tổng DT</span><b id="sum-r">0</b></div>
         <div class="s-card"><span>APPs</span><b id="sum-apps">0</b></div>
-        <div class="s-card"><span>CK (Tổng)</span><b id="sum-ck-all">0</b><div class="ck-row-flex"><span>T:<i id="sum-tcb">0</i></span><span>V:<i id="sum-vcb">0</i></span></div></div>
+        <div class="s-card">
+            <span>CK (Tổng)</span><b id="sum-ck-all">0</b>
+            <div class="ck-row-flex">T:<i id="sum-tcb">0</i> V:<i id="sum-vcb">0</i></div>
+        </div>
         <div class="s-card"><span>TM</span><b id="sum-tm">0</b></div>
     </div>
     <div class="summary-grid" style="grid-template-columns: 1fr 1fr;">
-        <div class="s-card" style="border-top-color: #dc3545;"><span>TỔNG CHI</span><b id="sum-e" style="font-size:18px">0</b></div>
+        <div class="s-card" style="border-top-color: #dc3545;"><span>TỔNG CHI</span><b id="sum-e">0</b></div>
         <div class="s-card" style="border-top-color: #ffc107;"><span>CHÊNH</span><b id="sum-d">0</b></div>
     </div>
 
@@ -142,6 +147,15 @@
         if(n === 'report') load();
     }
 
+    // HÀM XỬ LÝ NGÀY THÁNG ĐỂ KHÔNG BỊ LỖI NHƯ TRONG HÌNH
+    function formatDate(dateStr) {
+        const d = new Date(dateStr);
+        if (isNaN(d.getTime())) return dateStr.split('T')[0].split('-').pop(); // Nếu lỗi thì lấy tạm số cuối
+        const day = d.getDate().toString().padStart(2, '0');
+        const thuArr = ['CN', 'T2', 'T3', 'T4', 'T5', 'T6', 'T7'];
+        return `${day} (${thuArr[d.getDay()]})`;
+    }
+
     async function load() {
         const fMonth = document.getElementById('m-filter').value;
         const b = document.getElementById('res'); b.innerHTML = '<tr><td colspan="4">Tải...</td></tr>';
@@ -153,11 +167,10 @@
                 const tcb = parseFloat(x[5])||0, vcb = parseFloat(x[6])||0, tm = parseFloat(x[7])||0, chi = parseFloat(x[8])||0, kha = parseFloat(x[9])||0, lek = parseFloat(x[10])||0;
                 sR += rv; sA += (sho+gra+be); sT += tcb; sV += vcb; sTM += tm; sE += (chi+kha); sD += lek;
                 
-                // MÀU SẮC CHO BẢNG HÀNG NGÀY
                 let clrClass = lek > 0 ? 'plus' : (lek < 0 ? 'minus' : '');
                 let sgn = lek > 0 ? '+' : '';
                 
-                h += `<tr><td class="link-edit" onclick="viewBack('${x[0]}')">${x[0].split('-')[2]}</td><td class="${clrClass}">${sgn}${fmt.format(Math.round(lek))}</td><td>${fmt.format(Math.round(rv))}</td><td>${fmt.format(Math.round(chi+kha))}</td></tr>`;
+                h += `<tr><td class="link-edit" onclick="viewBack('${x[0]}')">${formatDate(x[0])}</td><td class="${clrClass}">${sgn}${fmt.format(Math.round(lek))}</td><td>${fmt.format(Math.round(rv))}</td><td>${fmt.format(Math.round(chi+kha))}</td></tr>`;
             });
             b.innerHTML = h || '<tr><td colspan="4">Trống</td></tr>';
             document.getElementById('sum-r').innerText = fmt.format(Math.round(sR));
@@ -177,7 +190,8 @@
 
     function viewBack(dateStr) {
         const r = window.rawD.find(i => i[0].toString() === dateStr); if(!r) return;
-        document.getElementById('date').value = r[0]; document.getElementById('total_rev').value = r[1];
+        document.getElementById('date').value = r[0].toString().split('T')[0]; 
+        document.getElementById('total_rev').value = r[1];
         document.getElementById('shopee').value = r[2]; document.getElementById('grab').value = r[3]; document.getElementById('be').value = r[4];
         document.getElementById('ck_tcb').value = r[5]; document.getElementById('ck_vcb').value = r[6]; document.getElementById('cash').value = r[7]; document.getElementById('expense').value = r[8];
         document.getElementById('other_list').innerHTML = `<div style="display:flex; gap:5px; margin-bottom:5px"><input type="number" class="other-val" style="width:40%" value="${r[9]||''}" oninput="cal()"><input type="text" class="other-note" style="width:60%" value="${r[11]||''}"></div>`;
