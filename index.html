@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Kiên K80 - Fix Ghi Đè Triệt Để</title>
+    <title>Kiên K80 - Tổng Hợp Chuẩn Màu</title>
     <style>
         body { font-family: -apple-system, sans-serif; margin: 0; background: #f4f6f8; color: #333; }
         .tabs { display: flex; background: white; border-bottom: 1px solid #ddd; position: sticky; top: 0; z-index: 100; }
@@ -11,87 +11,116 @@
         .tab.active { color: #007bff; border-bottom: 3px solid #007bff; }
         .content { display: none; padding: 10px; max-width: 600px; margin: auto; }
         .content.active { display: block; }
+        
         .group { background: white; padding: 10px; border-radius: 8px; margin-bottom: 8px; box-shadow: 0 1px 2px rgba(0,0,0,0.1); }
         .in-row { display: flex; gap: 8px; margin-bottom: 6px; align-items: center; }
         .label-text { width: 95px; font-size: 15px; font-weight: bold; color: #555; flex-shrink: 0; }
         input { border: 1px solid #ddd; border-radius: 5px; padding: 12px; font-size: 18px; text-align: right; width: 100%; box-sizing: border-box; }
-        .summary-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 4px; margin-bottom: 5px; }
-        .s-card { background: white; padding: 8px 1px; border-radius: 6px; text-align: center; border-top: 3px solid #007bff; min-height: 55px; display: flex; flex-direction: column; justify-content: center; }
-        .s-card span { font-size: 9px; color: #666; font-weight: bold; text-transform: uppercase; }
-        .s-card b { font-size: 13px; color: #000; } 
+
+        /* TỔNG HỢP TRÊN ĐẦU */
+        .summary-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 4px; margin-bottom: 4px; }
+        .s-card { background: white; padding: 8px 1px; border-radius: 6px; text-align: center; border-top: 4px solid #007bff; box-shadow: 0 1px 2px rgba(0,0,0,0.1); min-height: 58px; display: flex; flex-direction: column; justify-content: center; }
+        .s-card span { font-size: 9px; color: #666; font-weight: bold; display: block; margin-bottom: 3px; text-transform: uppercase; }
+        .s-card b { font-size: 13px; display: block; color: #000; } 
+        .ck-row-flex { display: flex; justify-content: center; gap: 4px; font-size: 9px; color: #6f42c1; margin-top: 2px; border-top: 1px dashed #eee; padding-top: 2px; }
+        
+        /* MÀU SẮC CHUẨN */
+        .txt-xanh { color: #2ecc71 !important; font-weight: bold; }
+        .txt-do { color: #ff4d4d !important; font-weight: bold; }
+        .txt-avg { color: #17a2b8 !important; }
+
         table { width: 100%; border-collapse: collapse; background: white; font-size: 14px; margin-top: 10px; }
         th, td { border: 1px solid #eee; padding: 12px 4px; text-align: right; }
         th { background: #f8f9fa; font-weight: bold; text-align: center; }
         .link-edit { color: #007bff; text-decoration: underline; font-weight: bold; cursor: pointer; }
+
         .btn-save { background: #28a745; color: white; width: 100%; padding: 18px; border: none; border-radius: 8px; font-size: 20px; font-weight: bold; cursor: pointer; margin-top: 10px; }
         .btn-print { background: #343a40; color: white; width: 100%; padding: 15px; border: none; border-radius: 8px; font-size: 16px; font-weight: bold; margin-top: 8px; cursor: pointer; }
         .diff-container { background: #343a40; color: white; padding: 12px; border-radius: 10px; text-align: center; margin: 10px 0; }
         #diff-val { font-size: 32px; font-weight: 900; }
+
         @media print {
             header, .tabs, .btn-save, .btn-print, #report, button, .tab { display: none !important; }
             body { background: white !important; color: #000 !important; }
             @page { size: 80mm auto; margin: 0; }
             #input { display: block !important; width: 100% !important; }
             .group { box-shadow: none !important; border-bottom: 2px solid #000 !important; }
+            .label-text { font-size: 14px !important; font-weight: 900 !important; color: #000 !important; }
             input { border: none !important; font-weight: 900 !important; font-size: 18px !important; color: #000 !important; }
-            .diff-container { background: white !important; border: 3px solid #000 !important; padding: 5px 0 !important; }
+            .diff-container { background: white !important; border: 3px solid #000 !important; padding: 5px 0 !important; color: #000 !important; }
             #input::before { content: "BIÊN LAI CHỐT TIỀN"; display: block; text-align: center; font-weight: 900; font-size: 20px; border-bottom: 3px solid #000; margin-bottom: 5px; }
         }
     </style>
 </head>
 <body>
-<div class="tabs"><div id="tab-in" class="tab active" onclick="openTab('input', this)">NHẬP LIỆU</div><div id="tab-re" class="tab" onclick="openTab('report', this)">TỔNG HỢP</div></div>
+
+<div class="tabs">
+    <div id="tab-in" class="tab active" onclick="openTab('input', this)">NHẬP LIỆU</div>
+    <div id="tab-re" class="tab" onclick="openTab('report', this)">TỔNG HỢP</div>
+</div>
+
 <div id="input" class="content active">
     <div class="group"><div class="in-row"><span class="label-text">Ngày:</span><input type="date" id="date"></div></div>
-    <div class="group"><div class="in-row"><span class="label-text">Tổng DT:</span><input type="number" id="total_rev" oninput="cal()"></div></div>
+    <div class="group"><div class="in-row"><span class="label-text">Tổng DT:</span><input type="number" id="total_rev" oninput="cal()" placeholder="0"></div></div>
     <div class="group">
-        <div class="in-row"><span class="label-text">Shopee:</span><input type="number" id="shopee" oninput="cal()"></div>
-        <div class="in-row"><span class="label-text">Grab:</span><input type="number" id="grab" oninput="cal()"></div>
-        <div class="in-row"><span class="label-text">Be:</span><input type="number" id="be" oninput="cal()"></div>
+        <div class="in-row"><span class="label-text">Shopee:</span><input type="number" id="shopee" oninput="cal()" placeholder="0"></div>
+        <div class="in-row"><span class="label-text">Grab:</span><input type="number" id="grab" oninput="cal()" placeholder="0"></div>
+        <div class="in-row"><span class="label-text">Be:</span><input type="number" id="be" oninput="cal()" placeholder="0"></div>
     </div>
     <div class="group">
-        <div class="in-row"><span class="label-text">CK (TCB):</span><input type="number" id="ck_tcb" oninput="cal()"></div>
-        <div class="in-row"><span class="label-text">CK (VCB):</span><input type="number" id="ck_vcb" oninput="cal()"></div>
+        <div class="in-row"><span class="label-text">CK (TCB):</span><input type="number" id="ck_tcb" oninput="cal()" placeholder="0"></div>
+        <div class="in-row"><span class="label-text">CK (VCB):</span><input type="number" id="ck_vcb" oninput="cal()" placeholder="0"></div>
     </div>
-    <div class="group"><div class="in-row"><span class="label-text">Tiền mặt:</span><input type="number" id="cash" oninput="cal()"></div></div>
-    <div class="group"><div class="in-row"><span class="label-text">Tổng chi:</span><input type="number" id="expense" oninput="cal()"></div></div>
+    <div class="group"><div class="in-row"><span class="label-text">Tiền mặt:</span><input type="number" id="cash" oninput="cal()" placeholder="0"></div></div>
+    <div class="group"><div class="in-row"><span class="label-text">Tổng chi:</span><input type="number" id="expense" oninput="cal()" placeholder="0"></div></div>
     <div class="group" id="other_group">
         <div class="in-row" style="justify-content: space-between;"><span class="label-text">Khác:</span><button onclick="addOtherRow()" style="width:30px; height:30px;">+</button></div>
-        <div id="other_list"><div style="display:flex; gap:5px; margin-bottom:5px"><input type="number" class="other-val" oninput="cal()" style="width:40%"><input type="text" class="other-note" style="width:60%"></div></div>
+        <div id="other_list"><div style="display:flex; gap:5px; margin-bottom:5px"><input type="number" class="other-val" style="width:40%" oninput="cal()"><input type="text" class="other-note" style="width:60%"></div></div>
     </div>
     <div class="diff-container"><b id="diff-val">0</b><span id="status-label">--</span></div>
     <button id="btnSave" class="btn-save" onclick="send()">LƯU DỮ LIỆU</button>
     <button class="btn-print" onclick="window.print()">🖨️ IN BIÊN LAI (K80)</button>
 </div>
+
 <div id="report" class="content">
-    <div style="text-align:center; margin-bottom:12px"><input type="month" id="m-filter" onchange="load()"></div>
+    <div style="text-align:center; margin-bottom:12px"><input type="month" id="m-filter" onchange="load()" style="padding:10px; font-size:16px;"></div>
+    
     <div class="summary-grid">
         <div class="s-card"><span>Tổng DT</span><b id="sum-r">0</b></div>
         <div class="s-card"><span>APPs</span><b id="sum-apps">0</b></div>
-        <div class="s-card"><span>CK (Tổng)</span><b id="sum-ck-all">0</b></div>
+        <div class="s-card"><span>CK (Tổng)</span><b id="sum-ck-all">0</b><div class="ck-row-flex">T:<i id="sum-tcb">0</i> V:<i id="sum-vcb">0</i></div></div>
         <div class="s-card"><span>TM</span><b id="sum-tm">0</b></div>
     </div>
     <div class="summary-grid">
-        <div class="s-card"><span>DT TB/Ngày</span><b id="sum-avg">0</b></div>
-        <div class="s-card"><span>Chi</span><b id="sum-e">0</b></div>
-        <div class="s-card"><span>Chênh</span><b id="sum-d">0</b></div>
+        <div class="s-card" style="border-top-color: #17a2b8;"><span>DT TB/Ngày</span><b id="sum-avg" class="txt-avg">0</b></div>
+        <div class="s-card" style="border-top-color: #dc3545;"><span>Chi</span><b id="sum-e">0</b></div>
+        <div class="s-card" id="card-d" style="border-top-color: #ffc107;"><span>Chênh</span><b id="sum-d">0</b></div>
+        <div class="s-card" style="border:none; background:transparent; box-shadow:none;"></div>
     </div>
+
     <table><thead><tr><th>Ngày</th><th>Chênh</th><th>DT</th><th>Chi</th></tr></thead><tbody id="res"></tbody></table>
 </div>
+
 <script>
     const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwkZ84xYVve0CjrxS-vj3-N84UT0nJRS28wAnSIhqr8HrmErfS7UMT7SPFxsIra9Wpx/exec";
     const fmt = new Intl.NumberFormat();
+
     function addOtherRow() {
         const div = document.createElement('div'); div.style.display = 'flex'; div.style.gap = '5px'; div.style.marginBottom = '5px';
         div.innerHTML = `<input type="number" class="other-val" style="width:40%" oninput="cal()"><input type="text" class="other-note" style="width:60%">`;
         document.getElementById('other_list').appendChild(div);
     }
+
     function cal() {
         const g = (id) => parseFloat(document.getElementById(id).value) || 0;
         let ot = 0; document.querySelectorAll('.other-val').forEach(el => ot += parseFloat(el.value) || 0);
         const diff = (g('shopee') + g('grab') + g('be') + g('ck_tcb') + g('ck_vcb') + g('cash') + g('expense') + ot) - g('total_rev');
         document.getElementById('diff-val').innerText = fmt.format(Math.round(diff));
+        const lb = document.getElementById('status-label');
+        lb.innerText = diff > 0 ? "DƯƠNG (+)" : (diff < 0 ? "ÂM (-)" : "KHỚP");
+        lb.className = diff > 0 ? "txt-xanh" : (diff < 0 ? "txt-do" : "");
     }
+
     async function send() {
         const b = document.getElementById('btnSave'); b.disabled = true; b.innerText = "ĐANG LƯU...";
         const g = (id) => parseFloat(document.getElementById(id).value) || 0;
@@ -101,14 +130,16 @@
         });
         let ot = 0; document.querySelectorAll('.other-val').forEach(el => ot += parseFloat(el.value) || 0);
         const p = { date: "'" + document.getElementById('date').value, total_rev: g('total_rev'), shopee: g('shopee'), grab: g('grab'), be: g('be'), ck_tcb: g('ck_tcb'), ck_vcb: g('ck_vcb'), cash: g('cash'), expense: g('expense'), other: ot, note: notes.join(", "), diff: document.getElementById('diff-val').innerText.replace(/,/g,'') };
-        try { await fetch(SCRIPT_URL, { method: 'POST', body: JSON.stringify(p) }); alert("Đã lưu/cập nhật!"); location.reload(); } catch (e) { b.disabled = false; b.innerText = "LƯU DỮ LIỆU"; }
+        try { await fetch(SCRIPT_URL, { method: 'POST', body: JSON.stringify(p) }); alert("Đã lưu!"); location.reload(); } catch (e) { b.disabled = false; b.innerText = "LƯU DỮ LIỆU"; }
     }
+
     function openTab(n, el) {
         document.querySelectorAll('.content').forEach(c => c.classList.remove('active'));
         document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
         document.getElementById(n).classList.add('active'); if(el) el.classList.add('active');
         if(n === 'report') load();
     }
+
     function safeFormatDate(rawStr) {
         let s = rawStr.toString().replace(/[']/g, "").substring(0, 10);
         let p = s.split(/[-/]/); if(p.length < 3) return s;
@@ -116,22 +147,43 @@
         const thuArr = ['CN', 'T2', 'T3', 'T4', 'T5', 'T6', 'T7'];
         return `${p[2]} (${thuArr[dObj.getDay()]})`;
     }
+
     async function load() {
         const fMonth = document.getElementById('m-filter').value;
         const b = document.getElementById('res'); b.innerHTML = '<tr><td colspan="4">Tải...</td></tr>';
         try {
             const res = await fetch(SCRIPT_URL); const data = await res.json(); window.rawD = data;
-            let h = '', sR = 0, sA = 0, sE = 0, sD = 0, count = 0;
+            let h = '', sR = 0, sSho = 0, sGra = 0, sBe = 0, sT = 0, sV = 0, sTM = 0, sE = 0, sD = 0, count = 0;
+            
             data.filter(x => x[0] && x[0].toString().replace(/[']/g,"").startsWith(fMonth)).reverse().forEach(x => {
-                const rv = parseFloat(x[1])||0, chi = (parseFloat(x[8])||0)+(parseFloat(x[9])||0), lek = parseFloat(x[10])||0;
-                sR += rv; sE += chi; sD += lek; count++;
-                h += `<tr><td class="link-edit" onclick="viewBack('${x[0]}')">${safeFormatDate(x[0])}</td><td>${fmt.format(lek)}</td><td>${fmt.format(rv)}</td><td>${fmt.format(chi)}</td></tr>`;
+                const rv = parseFloat(x[1])||0, sho = parseFloat(x[2])||0, gra = parseFloat(x[3])||0, be = parseFloat(x[4])||0;
+                const tcb = parseFloat(x[5])||0, vcb = parseFloat(x[6])||0, tm = parseFloat(x[7])||0, chi = parseFloat(x[8])||0, kha = parseFloat(x[9])||0, lek = parseFloat(x[10])||0;
+                
+                sR += rv; sSho += sho; sGra += gra; sBe += be;
+                sT += tcb; sV += vcb; sTM += tm; sE += (chi+kha); sD += lek; count++;
+                
+                let clr = lek > 0 ? 'txt-xanh' : (lek < 0 ? 'txt-do' : '');
+                h += `<tr><td class="link-edit" onclick="viewBack('${x[0]}')">${safeFormatDate(x[0])}</td><td class="${clr}">${lek>0?'+':''}${fmt.format(lek)}</td><td>${fmt.format(rv)}</td><td>${fmt.format(chi+kha)}</td></tr>`;
             });
-            b.innerHTML = h; document.getElementById('sum-r').innerText = fmt.format(sR);
+            
+            b.innerHTML = h;
+            document.getElementById('sum-r').innerText = fmt.format(sR);
+            document.getElementById('sum-apps').innerText = fmt.format(sSho + sGra + sBe);
+            document.getElementById('sum-ck-all').innerText = fmt.format(sT + sV);
+            document.getElementById('sum-tcb').innerText = fmt.format(sT);
+            document.getElementById('sum-vcb').innerText = fmt.format(sV);
+            document.getElementById('sum-tm').innerText = fmt.format(sTM);
+            document.getElementById('sum-e').innerText = fmt.format(sE);
             document.getElementById('sum-avg').innerText = count > 0 ? fmt.format(Math.round(sR/count)) : 0;
-            document.getElementById('sum-e').innerText = fmt.format(sE); document.getElementById('sum-d').innerText = fmt.format(sD);
+            
+            // ĐỔ MÀU CHO Ô CHÊNH THÁNG TRÊN ĐẦU
+            const dVal = document.getElementById('sum-d');
+            dVal.innerText = (sD > 0 ? '+' : '') + fmt.format(sD);
+            dVal.className = sD > 0 ? 'txt-xanh' : (sD < 0 ? 'txt-do' : '');
+            
         } catch(e) { b.innerHTML = '<tr><td colspan="4">Lỗi!</td></tr>'; }
     }
+
     function viewBack(rawStr) {
         const r = window.rawD.find(i => i[0].toString() === rawStr.toString()); if(!r) return;
         document.getElementById('date').value = rawStr.toString().replace(/[']/g,"").substring(0, 10); 
@@ -142,6 +194,7 @@
         document.getElementById('other_list').innerHTML = `<div style="display:flex; gap:5px; margin-bottom:5px"><input type="number" class="other-val" value="${r[9]}" oninput="cal()"><input type="text" class="other-note" value="${r[11]}"></div>`;
         cal(); openTab('input', document.getElementById('tab-in'));
     }
+
     document.getElementById('date').value = new Date().toLocaleDateString('en-CA');
     document.getElementById('m-filter').value = new Date().toISOString().substring(0, 7);
 </script>
