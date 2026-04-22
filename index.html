@@ -3,23 +3,22 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Hệ Thống Kiên K80 - In Chuẩn Nét</title>
+    <title>Hệ Thống Kiên K80 - Cập Nhật Thông Minh</title>
     <style>
         body { font-family: -apple-system, sans-serif; margin: 0; background: #f4f6f8; color: #333; }
         .tabs { display: flex; background: white; border-bottom: 1px solid #ddd; position: sticky; top: 0; z-index: 100; }
-        .tab { flex: 1; padding: 12px; text-align: center; cursor: pointer; color: #888; font-size: 16px; font-weight: bold; }
+        .tab { flex: 1; padding: 12px; text-align: center; cursor: pointer; color: #888; font-size: 14px; font-weight: bold; }
         .tab.active { color: #007bff; border-bottom: 3px solid #007bff; }
         .content { display: none; padding: 10px; max-width: 600px; margin: auto; }
         .content.active { display: block; }
         
-        /* Nhập liệu */
         .group { background: white; padding: 10px; border-radius: 8px; margin-bottom: 8px; box-shadow: 0 1px 2px rgba(0,0,0,0.1); }
         .in-row { display: flex; gap: 8px; margin-bottom: 6px; align-items: center; }
         .label-text { width: 95px; font-size: 15px; font-weight: bold; color: #555; flex-shrink: 0; }
         input { border: 1px solid #ddd; border-radius: 5px; padding: 12px; font-size: 18px; text-align: right; width: 100%; box-sizing: border-box; }
 
-        /* Tổng hợp */
-        .summary-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 4px; margin-bottom: 4px; }
+        /* Tổng hợp 2 hàng cân đối */
+        .summary-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 4px; margin-bottom: 5px; }
         .s-card { background: white; padding: 8px 1px; border-radius: 6px; text-align: center; border-top: 3px solid #007bff; box-shadow: 0 1px 2px rgba(0,0,0,0.1); min-height: 55px; display: flex; flex-direction: column; justify-content: center; }
         .s-card span { font-size: 9px; color: #666; font-weight: bold; display: block; margin-bottom: 3px; text-transform: uppercase; line-height: 1.1; }
         .s-card b { font-size: 13px; display: block; color: #000; } 
@@ -39,82 +38,16 @@
         .diff-container { background: #343a40; color: white; padding: 12px; border-radius: 10px; text-align: center; margin: 10px 0; }
         #diff-val { font-size: 32px; font-weight: 900; }
 
-        /* ===========================================
-           HỆ THỐNG IN CHUẨN K80 - CHỮ ĐEN GIẤY TRẮNG
-           =========================================== */
         @media print {
             header, .tabs, .btn-save, .btn-print, #report, button, .tab, .icon-btn { display: none !important; }
-            
-            body { 
-                background: white !important; 
-                color: #000000 !important; 
-                margin: 0 !important; 
-                padding: 0 !important;
-                -webkit-print-color-adjust: exact;
-                print-color-adjust: exact;
-            }
-
+            body { background: white !important; color: #000 !important; margin: 0; padding: 0; }
             @page { size: 80mm auto; margin: 0; }
-
-            #input { display: block !important; width: 100% !important; padding: 0 !important; margin: 0 !important; }
-
-            .group { 
-                box-shadow: none !important; 
-                border: none !important; 
-                border-bottom: 2px solid #000000 !important; /* Đường kẻ đen đậm */
-                padding: 2px 0 !important; 
-                margin: 0 !important; 
-                border-radius: 0 !important; 
-                line-height: 1.0 !important;
-            }
-
-            .in-row { 
-                padding: 1px 0 !important; 
-                margin: 0 !important; 
-                display: flex !important;
-            }
-
-            .label-text { 
-                font-size: 14px !important; 
-                color: #000000 !important; 
-                font-weight: 900 !important; /* Ép chữ đen đậm */
-                width: 100px !important;
-            }
-
-            input { 
-                border: none !important; 
-                font-weight: 900 !important; 
-                font-size: 18px !important; 
-                color: #000000 !important; 
-                text-align: right !important; 
-                padding: 0 !important; 
-                background: transparent !important;
-                flex: 1 !important;
-            }
-
-            .diff-container { 
-                background: white !important; 
-                border: 3px solid #000000 !important; 
-                padding: 5px 0 !important; 
-                margin: 5px 0 !important; 
-                color: #000000 !important;
-                border-radius: 0 !important;
-            }
-
-            #diff-val { font-size: 38px !important; font-weight: 900 !important; color: #000000 !important; }
-            #status-label { font-size: 16px !important; font-weight: 900 !important; color: #000000 !important; }
-
-            #input::before { 
-                content: "BIÊN LAI CHỐT TIỀN"; 
-                display: block; 
-                text-align: center; 
-                font-weight: 900; 
-                font-size: 20px; 
-                border-bottom: 3px solid #000000; 
-                margin-bottom: 5px; 
-                padding-bottom: 2px;
-                color: #000000 !important;
-            }
+            #input { display: block !important; width: 100% !important; }
+            .group { box-shadow: none !important; border-bottom: 2px solid #000 !important; padding: 2px 0 !important; margin: 0 !important; }
+            .label-text { font-size: 14px !important; font-weight: 900 !important; width: 100px !important; color: #000 !important; }
+            input { border: none !important; font-weight: 900 !important; font-size: 18px !important; color: #000 !important; }
+            .diff-container { background: white !important; border: 3px solid #000 !important; padding: 5px 0 !important; color: #000 !important; }
+            #input::before { content: "BIÊN LAI CHỐT TIỀN"; display: block; text-align: center; font-weight: 900; font-size: 20px; border-bottom: 3px solid #000; margin-bottom: 5px; color: #000 !important; }
         }
     </style>
 </head>
@@ -191,7 +124,7 @@
 </div>
 
 <script>
-    const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyKfN7dfS3YKL7ecXLMZtAH0cF2klbxVQM4nsrI5pNH2pLFDvlzKTkRbHOU9ujxT0ZM/exec";
+    const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzORmjGj_yNI8FTOyf7peViH5k4LawhNXYDj9oPzXtuiWfBBqZQMFChiy1-qb_pGnj8/exec";
     const fmt = new Intl.NumberFormat();
 
     function addOtherRow() {
@@ -219,8 +152,22 @@
             if(v) notes.push(`${n}(${v}k)`);
         });
         let ot = 0; document.querySelectorAll('.other-val').forEach(el => ot += parseFloat(el.value) || 0);
-        const p = { date: "'" + document.getElementById('date').value, total_rev: g('total_rev'), shopee: g('shopee'), grab: g('grab'), be: g('be'), ck_tcb: g('ck_tcb'), ck_vcb: g('ck_vcb'), cash: g('cash'), expense: g('expense'), other: ot, note: notes.join(", "), diff: document.getElementById('diff-val').innerText.replace(/,/g,'') };
-        try { await fetch(SCRIPT_URL, { method: 'POST', body: JSON.stringify(p) }); alert("Đã lưu!"); location.reload(); } catch (e) { b.disabled = false; b.innerText = "LƯU DỮ LIỆU"; }
+        
+        const p = { 
+            date: "'" + document.getElementById('date').value, 
+            total_rev: g('total_rev'), shopee: g('shopee'), grab: g('grab'), be: g('be'), 
+            ck_tcb: g('ck_tcb'), ck_vcb: g('ck_vcb'), cash: g('cash'), expense: g('expense'), 
+            other: ot, note: notes.join(", "), 
+            diff: document.getElementById('diff-val').innerText.replace(/,/g,'') 
+        };
+        
+        try { 
+            await fetch(SCRIPT_URL, { method: 'POST', body: JSON.stringify(p) }); 
+            alert("Đã lưu/cập nhật!"); 
+            location.reload(); 
+        } catch (e) { 
+            b.disabled = false; b.innerText = "LƯU DỮ LIỆU"; 
+        }
     }
 
     function openTab(n, el) {
@@ -232,7 +179,7 @@
 
     function safeFormatDate(rawStr) {
         if(!rawStr) return "??";
-        let s = rawStr.toString().substring(0, 10);
+        let s = rawStr.toString().substring(0, 10).replace(/'/g, "");
         let p = s.split(/[-/]/);
         if(p.length < 3) return s;
         let dObj = new Date(parseInt(p[0]), parseInt(p[1]) - 1, parseInt(p[2]));
@@ -247,7 +194,7 @@
         try {
             const res = await fetch(SCRIPT_URL); const data = await res.json(); window.rawD = data;
             let h = '', sR = 0, sA = 0, sT = 0, sV = 0, sTM = 0, sE = 0, sD = 0, count = 0;
-            data.filter(x => x[0] && x[0].toString().startsWith(fMonth)).reverse().forEach(x => {
+            data.filter(x => x[0] && x[0].toString().replace(/'/g,"").startsWith(fMonth)).reverse().forEach(x => {
                 const rv = parseFloat(x[1])||0, tcb = parseFloat(x[5])||0, vcb = parseFloat(x[6])||0, tm = parseFloat(x[7])||0, chi = parseFloat(x[8])||0, kha = parseFloat(x[9])||0, lek = parseFloat(x[10])||0;
                 sR += rv; sA += (parseFloat(x[2])||0+parseFloat(x[3])||0+parseFloat(x[4])||0);
                 sT += tcb; sV += vcb; sTM += tm; sE += (chi+kha); sD += lek; count++;
@@ -271,7 +218,7 @@
 
     function viewBack(rawStr) {
         const r = window.rawD.find(i => i[0].toString() === rawStr.toString()); if(!r) return;
-        document.getElementById('date').value = rawStr.toString().substring(0, 10).replace(/\//g, '-'); 
+        document.getElementById('date').value = rawStr.toString().replace(/'/g,"").substring(0, 10); 
         document.getElementById('total_rev').value = r[1];
         document.getElementById('shopee').value = r[2]; document.getElementById('grab').value = r[3]; document.getElementById('be').value = r[4];
         document.getElementById('ck_tcb').value = r[5]; document.getElementById('ck_vcb').value = r[6]; document.getElementById('cash').value = r[7]; document.getElementById('expense').value = r[8];
