@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Hệ Thống Kiên K80 - Cập Nhật Thông Minh</title>
+    <title>Hệ Thống Kiên K80 - Fix Ghi Đè</title>
     <style>
         body { font-family: -apple-system, sans-serif; margin: 0; background: #f4f6f8; color: #333; }
         .tabs { display: flex; background: white; border-bottom: 1px solid #ddd; position: sticky; top: 0; z-index: 100; }
@@ -17,9 +17,8 @@
         .label-text { width: 95px; font-size: 15px; font-weight: bold; color: #555; flex-shrink: 0; }
         input { border: 1px solid #ddd; border-radius: 5px; padding: 12px; font-size: 18px; text-align: right; width: 100%; box-sizing: border-box; }
 
-        /* Tổng hợp 2 hàng cân đối */
         .summary-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 4px; margin-bottom: 5px; }
-        .s-card { background: white; padding: 8px 1px; border-radius: 6px; text-align: center; border-top: 3px solid #007bff; box-shadow: 0 1px 2px rgba(0,0,0,0.1); min-height: 55px; display: flex; flex-direction: column; justify-content: center; }
+        .s-card { background: white; padding: 8px 1px; border-radius: 6px; text-align: center; border-top: 4px solid #007bff; box-shadow: 0 1px 2px rgba(0,0,0,0.1); min-height: 55px; display: flex; flex-direction: column; justify-content: center; }
         .s-card span { font-size: 9px; color: #666; font-weight: bold; display: block; margin-bottom: 3px; text-transform: uppercase; line-height: 1.1; }
         .s-card b { font-size: 13px; display: block; color: #000; } 
         .ck-row-flex { display: flex; justify-content: center; gap: 4px; font-size: 9px; color: #6f42c1; margin-top: 2px; border-top: 1px dashed #eee; padding-top: 2px; }
@@ -78,7 +77,7 @@
     
     <div class="group" id="other_group">
         <div class="in-row" style="justify-content: space-between;">
-            <span class="label-text">Khoản Khác:</span>
+            <span class="label-text">Khác:</span>
             <button onclick="addOtherRow()" class="icon-btn" style="background:#007bff; color:white; border:none; border-radius:50%; width:30px; height:30px; font-size:20px">+</button>
         </div>
         <div id="other_list">
@@ -124,7 +123,7 @@
 </div>
 
 <script>
-    const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzORmjGj_yNI8FTOyf7peViH5k4LawhNXYDj9oPzXtuiWfBBqZQMFChiy1-qb_pGnj8/exec";
+    const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwYNIGizshNIph1WRQin4Hz4_VA3ni58kW7gF578CsF0jEcP8Rk7YCp52_j5F3doqm1/exec";
     const fmt = new Intl.NumberFormat();
 
     function addOtherRow() {
@@ -153,6 +152,7 @@
         });
         let ot = 0; document.querySelectorAll('.other-val').forEach(el => ot += parseFloat(el.value) || 0);
         
+        // Gửi date với dấu nháy đơn để ép TEXT trong sheet
         const p = { 
             date: "'" + document.getElementById('date').value, 
             total_rev: g('total_rev'), shopee: g('shopee'), grab: g('grab'), be: g('be'), 
@@ -163,7 +163,7 @@
         
         try { 
             await fetch(SCRIPT_URL, { method: 'POST', body: JSON.stringify(p) }); 
-            alert("Đã lưu/cập nhật!"); 
+            alert("Đã cập nhật dữ liệu!"); 
             location.reload(); 
         } catch (e) { 
             b.disabled = false; b.innerText = "LƯU DỮ LIỆU"; 
@@ -179,7 +179,7 @@
 
     function safeFormatDate(rawStr) {
         if(!rawStr) return "??";
-        let s = rawStr.toString().substring(0, 10).replace(/'/g, "");
+        let s = rawStr.toString().replace(/'/g, "").substring(0, 10);
         let p = s.split(/[-/]/);
         if(p.length < 3) return s;
         let dObj = new Date(parseInt(p[0]), parseInt(p[1]) - 1, parseInt(p[2]));
@@ -195,9 +195,9 @@
             const res = await fetch(SCRIPT_URL); const data = await res.json(); window.rawD = data;
             let h = '', sR = 0, sA = 0, sT = 0, sV = 0, sTM = 0, sE = 0, sD = 0, count = 0;
             data.filter(x => x[0] && x[0].toString().replace(/'/g,"").startsWith(fMonth)).reverse().forEach(x => {
-                const rv = parseFloat(x[1])||0, tcb = parseFloat(x[5])||0, vcb = parseFloat(x[6])||0, tm = parseFloat(x[7])||0, chi = parseFloat(x[8])||0, kha = parseFloat(x[9])||0, lek = parseFloat(x[10])||0;
-                sR += rv; sA += (parseFloat(x[2])||0+parseFloat(x[3])||0+parseFloat(x[4])||0);
-                sT += tcb; sV += vcb; sTM += tm; sE += (chi+kha); sD += lek; count++;
+                const rv = parseFloat(x[1])||0, sho = parseFloat(x[2])||0, gra = parseFloat(x[3])||0, be = parseFloat(x[4])||0;
+                const tcb = parseFloat(x[5])||0, vcb = parseFloat(x[6])||0, tm = parseFloat(x[7])||0, chi = parseFloat(x[8])||0, kha = parseFloat(x[9])||0, lek = parseFloat(x[10])||0;
+                sR += rv; sA += (sho+gra+be); sT += tcb; sV += vcb; sTM += tm; sE += (chi+kha); sD += lek; count++;
                 let clrClass = lek > 0 ? 'plus' : (lek < 0 ? 'minus' : '');
                 h += `<tr><td class="link-edit" onclick="viewBack('${x[0]}')">${safeFormatDate(x[0])}</td><td class="${clrClass}">${lek > 0 ? '+' : ''}${fmt.format(Math.round(lek))}</td><td>${fmt.format(Math.round(rv))}</td><td>${fmt.format(Math.round(chi+kha))}</td></tr>`;
             });
